@@ -7,6 +7,11 @@
 using BepInEx;
 using UnityEngine;
 using BepInEx.Configuration;
+using Jotunn.Utils;
+using System.Reflection;
+using Jotunn.Entities;
+using Jotunn.Configs;
+using Jotunn.Managers;
 
 namespace JotunnModStub
 {
@@ -19,21 +24,63 @@ namespace JotunnModStub
         public const string PluginName = "JotunnModStub";
         public const string PluginVersion = "0.0.1";
         public static new Jotunn.Logger Logger;
+        private AssetBundle embeddedResourceBundle;
+
+        public GameObject turnipburgerfab { get; private set; }
 
         private void Awake()
         {
-            // Do all your init stuff here
-            // Acceptable value ranges can be defined to allow configuration via a slider in the BepInEx ConfigurationManager: https://github.com/BepInEx/BepInEx.ConfigurationManager
-            Config.Bind<int>("Main Section", "Example configuration integer", 1, new ConfigDescription("This is an example config, using a range limitation for ConfigurationManager", new AcceptableValueRange<int>(0, 100)));
+
+            LoadAssets();
+            CreateFood();
         }
 
-#if DEBUG
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F6))
-            { // Set a breakpoint here to break on F6 key press
-            }
+  
         }
-#endif
+
+
+        private void LoadAssets()
+        {
+            Jotunn.Logger.LogInfo($"Embedded resources: {string.Join(",", Assembly.GetExecutingAssembly().GetManifestResourceNames())}");
+            embeddedResourceBundle = AssetUtils.LoadAssetBundleFromResources("masterchef", Assembly.GetExecutingAssembly());
+            //insert prefabs here
+            turnipburgerfab = embeddedResourceBundle.LoadAsset<GameObject>("Assets/MasterChef/turnip_burger/turnipburger.prefab");
+
+
+        }
+
+        private void CreateFood()
+        {
+            var burger_prefab = embeddedResourceBundle.LoadAsset<GameObject>("turnipburger");
+            var burger = new CustomItem(burger_prefab, fixReference: false,
+                new ItemConfig
+                {
+                    Amount = 1,
+                    CraftingStation = "piece_cauldron",
+                    Requirements = new[]
+                    {
+                        new RequirementConfig { Item = "Honey", Amount = 1}
+                    }
+                });
+            ItemManager.Instance.AddItem(burger);
+        }
+        private void Foodrecipes()
+        {
+            CustomRecipe turnipburger = new CustomRecipe(new RecipeConfig()
+            {
+                Item = "turnipburger",
+                CraftingStation = "piece_cauldron",
+                Amount = 1,
+                Requirements = new[]
+                {
+                    new RequirementConfig {Item = "Honey", Amount = 1}
+                }
+            });
+            ItemManager.Instance.AddRecipe(turnipburger);
+
+        }
     }
 }
