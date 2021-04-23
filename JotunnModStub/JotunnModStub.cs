@@ -67,6 +67,8 @@ namespace JotunnModStub
                 });
             ItemManager.Instance.AddItem(burger);
         }
+
+        //can clone a prefab from game with this but it duplicates CreateFood() in a non working way
         private void Foodrecipes()
         {
             CustomRecipe turnipburger = new CustomRecipe(new RecipeConfig()
