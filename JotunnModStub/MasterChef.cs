@@ -13,25 +13,30 @@ using Jotunn.Entities;
 using Jotunn.Configs;
 using Jotunn.Managers;
 
-namespace JotunnModStub
+namespace MasterChef
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    [NetworkCompatibilty(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
-    internal class JotunnModStub : BaseUnityPlugin
+    internal class MasterChef : BaseUnityPlugin
     {
         public const string PluginGUID = "com.jotunn.masterchef";
         public const string PluginName = "MasterChef";
         public const string PluginVersion = "0.0.1";
         public static new Jotunn.Logger Logger;
         private AssetBundle embeddedResourceBundle;
+        public float _maxMana = 100f;
 
         private void Awake()
         {
-
             LoadAssets();
-            CreateFood();
-            BoneReorder.ApplyOnEquipmentChanged();
+            burger();
+            sausage();
+            stew();
+            butter();
+            cbj();
+            omlette();
+            chefhat();
+            fish();
         }
 
 
@@ -42,7 +47,7 @@ namespace JotunnModStub
             embeddedResourceBundle = AssetUtils.LoadAssetBundleFromResources("masterchef", Assembly.GetExecutingAssembly());
         }
 
-        private void CreateFood()
+        private void burger()
         {
             var burger_prefab = embeddedResourceBundle.LoadAsset<GameObject>("turnipburger");
             var burger = new CustomItem(burger_prefab, fixReference: false,
@@ -54,11 +59,17 @@ namespace JotunnModStub
                     Requirements = new[]
                     {
                         new RequirementConfig { Item = "Bread", Amount = 1},
-                        new RequirementConfig { Item = "CookdMeat", Amount = 2},
+                        new RequirementConfig { Item = "CookedMeat", Amount = 2},
                         new RequirementConfig { Item = "Turnip", Amount = 1}
                     }
                 });
+  
+            ItemManager.Instance.AddItem(burger);
 
+        }
+
+        void sausage()
+        {
             var sausage_prefab = embeddedResourceBundle.LoadAsset<GameObject>("BloodSausage");
             var sausage = new CustomItem(sausage_prefab, fixReference: false,
                 new ItemConfig
@@ -74,6 +85,11 @@ namespace JotunnModStub
                     }
                 });
 
+            ItemManager.Instance.AddItem(sausage);
+        }
+
+        void stew()
+        {
             var stew_prefab = embeddedResourceBundle.LoadAsset<GameObject>("brothbowl");
             var stew = new CustomItem(stew_prefab, fixReference: false,
                 new ItemConfig
@@ -87,6 +103,12 @@ namespace JotunnModStub
                         new RequirementConfig { Item = "Dandelion", Amount = 1}
                     }
                 });
+
+            ItemManager.Instance.AddItem(stew);
+        }
+
+        void butter()
+        {
 
             var butter_prefab = embeddedResourceBundle.LoadAsset<GameObject>("carrotbutter");
             var butter = new CustomItem(butter_prefab, fixReference: false,
@@ -102,7 +124,11 @@ namespace JotunnModStub
 
                     }
                 });
+            ItemManager.Instance.AddItem(butter);
+        }
 
+        void cbj()
+        {
             var cbj_prefab = embeddedResourceBundle.LoadAsset<GameObject>("cbj_sandwich");
             var cbj = new CustomItem(cbj_prefab, fixReference: false,
                 new ItemConfig
@@ -118,7 +144,10 @@ namespace JotunnModStub
 
                     }
                 });
-
+            ItemManager.Instance.AddItem(cbj);
+        }
+        void omlette()
+        {
 
             var omlette_prfab = embeddedResourceBundle.LoadAsset<GameObject>("dragonomletteprefab");
             var dragonomlette = new CustomItem(omlette_prfab, fixReference: false,
@@ -135,7 +164,26 @@ namespace JotunnModStub
 
                     }
                 });
-
+            ItemManager.Instance.AddItem(dragonomlette);
+        }
+        void fish()
+        {
+            var fish_prefab = embeddedResourceBundle.LoadAsset<GameObject>("fish_stew");
+            var fish = new CustomItem(fish_prefab, fixReference: false,
+                new ItemConfig
+                {
+                    Name = "Fish Stew",
+                    Amount = 1,
+                    CraftingStation = "piece_cauldron",
+                    Requirements = new[]
+                    {
+                        new RequirementConfig { Item = "FishRaw", Amount = 1}
+                    }
+                });
+            ItemManager.Instance.AddItem(fish);
+        }
+        void chefhat()
+        {
             var chef_prefab = embeddedResourceBundle.LoadAsset<GameObject>("chef_hat");
             var chefhat = new CustomItem(chef_prefab, fixReference: false,
                 new ItemConfig
@@ -148,30 +196,9 @@ namespace JotunnModStub
                         new RequirementConfig { Item = "LinenThread", Amount = 1}
                     }
                 });
-
-            var fish_prefab = embeddedResourceBundle.LoadAsset<GameObject>("fishstew");
-            var fish = new CustomItem(fish_prefab, fixReference: false,
-                new ItemConfig
-                {
-                    Name = "Fish Stew",
-                    Amount = 1,
-                    CraftingStation = null,
-                    Requirements = new[]
-                    {
-                        new RequirementConfig { Item = "RawFish", Amount = 1}
-                    }
-                });
-
-            ItemManager.Instance.AddItem(burger);
-            ItemManager.Instance.AddItem(sausage);
-            ItemManager.Instance.AddItem(stew);
-            ItemManager.Instance.AddItem(butter);
-            ItemManager.Instance.AddItem(cbj);
-            ItemManager.Instance.AddItem(dragonomlette);
             ItemManager.Instance.AddItem(chefhat);
-            ItemManager.Instance.AddItem(fish);
-
         }
 
+       
     }
 }
