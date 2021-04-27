@@ -177,6 +177,7 @@ namespace MasterChef
                     CraftingStation = "piece_cauldron",
                     Requirements = new[]
                     {
+                        new RequirementConfig { Item = "brothbowl", Amount = 1},
                         new RequirementConfig { Item = "FishRaw", Amount = 1}
                     }
                 });
