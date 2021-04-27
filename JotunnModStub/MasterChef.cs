@@ -20,8 +20,8 @@ namespace JotunnModStub
     [NetworkCompatibilty(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class JotunnModStub : BaseUnityPlugin
     {
-        public const string PluginGUID = "com.jotunn.jotunnmodstub";
-        public const string PluginName = "JotunnModStub";
+        public const string PluginGUID = "com.jotunn.masterchef";
+        public const string PluginName = "MasterChef";
         public const string PluginVersion = "0.0.1";
         public static new Jotunn.Logger Logger;
         private AssetBundle embeddedResourceBundle;
