@@ -70,7 +70,7 @@ namespace MasterChef
 
         void sausage()
         {
-            var sausage_prefab = embeddedResourceBundle.LoadAsset<GameObject>("BloodSausage");
+            var sausage_prefab = embeddedResourceBundle.LoadAsset<GameObject>("Blood_Sausage");
             var sausage = new CustomItem(sausage_prefab, fixReference: false,
                 new ItemConfig
                 {
