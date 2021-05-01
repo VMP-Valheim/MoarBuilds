@@ -54,7 +54,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "Burger",
-                    Amount = 1,
+                    Amount = 4,
                     CraftingStation = null ,
                     Requirements = new[]
                     {
@@ -75,7 +75,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "Blood Sausage",
-                    Amount = 1,
+                    Amount = 4,
                     CraftingStation = null,
                     Requirements = new[]
                     {
@@ -95,7 +95,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "Broth Bowl",
-                    Amount = 1,
+                    Amount = 10,
                     CraftingStation = null,
                     Requirements = new[]
                     {
@@ -115,7 +115,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "Carrot Butter",
-                    Amount = 1,
+                    Amount = 10,
                     CraftingStation = null,
                     Requirements = new[]
                     {
@@ -134,7 +134,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "CBJ Sandwich",
-                    Amount = 1,
+                    Amount = 10,
                     CraftingStation = null,
                     Requirements = new[]
                     {
@@ -154,7 +154,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "Dragon Omlette",
-                    Amount = 1,
+                    Amount = 20,
                     CraftingStation = null,
                     Requirements = new[]
                     {
@@ -173,7 +173,7 @@ namespace MasterChef
                 new ItemConfig
                 {
                     Name = "Fish Stew",
-                    Amount = 1,
+                    Amount = 4,
                     CraftingStation = "piece_cauldron",
                     Requirements = new[]
                     {
