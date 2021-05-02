@@ -21,7 +21,7 @@ namespace MasterChef
     {
         public const string PluginGUID = "com.jotunn.masterchef";
         public const string PluginName = "MasterChef";
-        public const string PluginVersion = "0.0.1";
+        public const string PluginVersion = "1.0.4";
         public static new Jotunn.Logger Logger;
         private AssetBundle embeddedResourceBundle;
         public float _maxMana = 100f;

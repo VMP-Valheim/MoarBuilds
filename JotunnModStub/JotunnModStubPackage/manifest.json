@@ -1,10 +1,10 @@
-﻿{
-  "name": "$safeprojectname$",
-  "description": "",
-  "version_number": "1.0.0",
-  "website_url": "",
-  "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.601",
-    ""
-  ]
+{
+    "name": "MasterChef2point0",
+    "version_number": "1.0.4",
+    "website_url": "https://github.com/sbtoonz/JotunnModStub",
+    "description": "This is an update to MasterChef to give it 3d models and a wearable hat!",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.1000", 
+		"ValheimModding-Jotunn-2.0.4"
+    ]
 }

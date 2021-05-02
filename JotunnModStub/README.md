@@ -1,6 +1,12 @@
 **MOD Description** 
 
 Master Chef 2.0 is a partial remake of Master Chef with 3d models by deBARBA
+Please support his artwork he made some really amazing models for this 
+
+You can find him here:
+patreon.com/littleroomdev 
+
+
 I have permission from hrve to remake master chef and can furnish proof if needed 
 
 
@@ -42,6 +48,10 @@ I wanna extend a huge thank you to Jotunn team they are amazing and basically en
 
 * initial release 
 
+**v1.0.1**
 
+* readme updates
 
+**v1.0.2**
 
+* readme updates
