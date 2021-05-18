@@ -18,28 +18,30 @@ namespace MaorBuilds
         public const string PluginName = "MaorBuilds";
         public const string PluginVersion = "1.0.0";
         public static new Jotunn.Logger Logger;
-        private AssetBundle embeddedResourceBundle;
-
-
+        private Piece piece;
+        private Texture2D testTex;
+        private Sprite testSprite;
+        private Texture2D suckit;
         private void Awake()
         {
+            SpriteThings();
             ItemManager.OnVanillaItemsAvailable += GrabPieces;
         }
 
-
+        private void SpriteThings()
+        {
+            testTex = AssetUtils.LoadTexture("MaorBuilds/Assets/test_tex.jpg");
+            testSprite = Sprite.Create(testTex, new Rect(0f, 0f, testTex.width, testTex.height), Vector2.zero);
+        }
         private void GrabPieces()
         {
             try
             {
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
-               
-                
-                PrefabManager.Instance.AddPrefab(test);
+                test.AddComponent<Piece>();
+                test.AddComponent<Transform>();
 
-
-                //Make piece->hammer
-                var foo = PrefabManager.Instance.GetPrefab("goblin_roof_cap1");
-                var CP = new CustomPiece(foo,
+                var CP = new CustomPiece(test,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -49,11 +51,18 @@ namespace MaorBuilds
                              new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
                         }
                     });
-                var testpiece = CP.Piece;
-                testpiece.m_canBeRemoved = true;
-                testpiece.m_category = Piece.PieceCategory.Building;
-                testpiece.m_enabled = true;
-                testpiece.m_randomTarget = true;
+                Transform transform = test.transform;
+                transform.localPosition = new Vector3(0f, 0f, 0f);
+                transform.position = new Vector3(0f, 0f, 0f);
+                var piece = CP.Piece;
+                piece.m_name = "goblin_roof_cap1";
+                piece.m_description = "testing";
+                piece.m_canBeRemoved = true;
+                piece.m_icon = testSprite;
+                piece.m_primaryTarget = true;
+                piece.m_randomTarget = true;
+                piece.m_category = Piece.PieceCategory.Building;
+                piece.m_enabled = true;
                 PieceManager.Instance.AddPiece(CP);
 
             }
