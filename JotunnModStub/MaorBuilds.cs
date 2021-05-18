@@ -6,6 +6,7 @@ using System.Reflection;
 using Jotunn.Entities;
 using Jotunn.Configs;
 using Jotunn.Managers;
+using System;
 
 namespace MaorBuilds
 {
@@ -22,19 +23,52 @@ namespace MaorBuilds
 
         private void Awake()
         {
-            LoadAssets();
-
+            ItemManager.OnVanillaItemsAvailable += GrabPieces;
         }
 
 
-
-        private void LoadAssets()
+        private void GrabPieces()
         {
-            Jotunn.Logger.LogInfo($"Embedded resources: {string.Join(",", Assembly.GetExecutingAssembly().GetManifestResourceNames())}");
-            embeddedResourceBundle = AssetUtils.LoadAssetBundleFromResources("masterchef", Assembly.GetExecutingAssembly());
+            try
+            {
+                var test = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
+               
+                
+                PrefabManager.Instance.AddPrefab(test);
+
+
+                //Make piece->hammer
+                var foo = PrefabManager.Instance.GetPrefab("goblin_roof_cap1");
+                var CP = new CustomPiece(foo,
+                    new PieceConfig
+                    {
+                        PieceTable = "_HammerPieceTable",
+                        AllowedInDungeons = false,
+                        Requirements = new[]
+                        {
+                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                        }
+                    });
+                var testpiece = CP.Piece;
+                testpiece.m_canBeRemoved = true;
+                testpiece.m_category = Piece.PieceCategory.Building;
+                testpiece.m_enabled = true;
+                testpiece.m_randomTarget = true;
+                PieceManager.Instance.AddPiece(CP);
+
+            }
+            catch (Exception ex)
+            {
+                Jotunn.Logger.LogError($"Error while adding cloned item: {ex.Message}");
+            }
+            finally
+            {
+                ItemManager.OnVanillaItemsAvailable -= GrabPieces;
+            }
+
+          
+
         }
-
-
-       
+     
     }
-} 
+}
