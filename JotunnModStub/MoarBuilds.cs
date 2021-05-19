@@ -30,7 +30,7 @@ namespace MaorBuilds
 
         private void SpriteThings()
         {
-            testTex = AssetUtils.LoadTexture("MaorBuilds/Assets/test_tex.jpg");
+            testTex = AssetUtils.LoadTexture("MoarBuilds/Assets/test_tex.jpg");
             testSprite = Sprite.Create(testTex, new Rect(0f, 0f, testTex.width, testTex.height), Vector2.zero);
         }
         private void GrabPieces()
