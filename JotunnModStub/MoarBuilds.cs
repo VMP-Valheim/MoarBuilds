@@ -21,6 +21,13 @@ namespace MaorBuilds
         private Piece piece;
         private Texture2D testTex;
         private Sprite testSprite;
+        private Sprite goblinfence;
+        private Sprite goblinspike;
+        private Sprite goblinribwall2m;
+        private Sprite roof45;
+        private Sprite roof45corner;
+        private Sprite woodwall1m;
+        private Sprite woodwall2m;
         private AssetBundle assetBundle;
         private void Awake()
         {
@@ -30,6 +37,15 @@ namespace MaorBuilds
 
         private void SpriteThings()
         {
+            assetBundle = AssetUtils.LoadAssetBundleFromResources("sprites", typeof(MoarBuilds).Assembly);
+            goblinfence = assetBundle.LoadAsset<Sprite>("goblinfence");
+            goblinspike = assetBundle.LoadAsset<Sprite>("goblinspike");
+            goblinribwall2m = assetBundle.LoadAsset<Sprite>("goblinribwall2m");
+            roof45 = assetBundle.LoadAsset<Sprite>("roof45");
+            roof45corner = assetBundle.LoadAsset<Sprite>("Roof45Corner");
+            woodwall1m = assetBundle.LoadAsset<Sprite>("woodwall1m");
+            woodwall2m = assetBundle.LoadAsset<Sprite>("woodwall2m");
+
             testTex = AssetUtils.LoadTexture("MoarBuilds/Assets/test_tex.jpg");
             testSprite = Sprite.Create(testTex, new Rect(0f, 0f, testTex.width, testTex.height), Vector2.zero);
         }
@@ -59,9 +75,9 @@ namespace MaorBuilds
                 piece.m_name = "goblin_woodwall_2m_ribs1";
                 piece.m_description = "testing";
                 piece.m_canBeRemoved = true;
-                piece.m_icon = testSprite;
+                piece.m_icon = goblinribwall2m;
                 piece.m_primaryTarget = false;
-                piece.m_randomTarget = false;
+                piece.m_randomTarget = true;
                 piece.m_category = Piece.PieceCategory.Building;
                 piece.m_enabled = true;
                 piece.m_isUpgrade = false;
@@ -115,9 +131,9 @@ namespace MaorBuilds
                 fencepiece.m_name = "goblin_fence1";
                 fencepiece.m_description = "testing";
                 fencepiece.m_canBeRemoved = true;
-                fencepiece.m_icon = testSprite;
+                fencepiece.m_icon = goblinfence;
                 fencepiece.m_primaryTarget = false;
-                fencepiece.m_randomTarget = false;
+                fencepiece.m_randomTarget = true;
                 fencepiece.m_category = Piece.PieceCategory.Building;
                 fencepiece.m_enabled = true;
                 fencepiece.m_isUpgrade = false;
@@ -132,8 +148,6 @@ namespace MaorBuilds
                 fencepiece.m_noClipping = false;
                 fencepiece.m_onlyInTeleportArea = false;
                 fencepiece.m_allowedInDungeons = false;
-                fencepiece.m_center = new Vector3(0f, 0f, 0f);
-                fencepiece.m_haveCenter = false;
                 fencepiece.m_spaceRequirement = 0;
                 #endregion
                 #region GoblinRoof45
@@ -158,9 +172,9 @@ namespace MaorBuilds
                 goblinroofer.m_name = "goblin_roof_45d1";
                 goblinroofer.m_description = "testing";
                 goblinroofer.m_canBeRemoved = true;
-                goblinroofer.m_icon = testSprite;
+                goblinroofer.m_icon = roof45;
                 goblinroofer.m_primaryTarget = false;
-                goblinroofer.m_randomTarget = false;
+                goblinroofer.m_randomTarget = true;
                 goblinroofer.m_category = Piece.PieceCategory.Building;
                 goblinroofer.m_enabled = true;
                 goblinroofer.m_isUpgrade = false;
@@ -175,8 +189,6 @@ namespace MaorBuilds
                 goblinroofer.m_noClipping = false;
                 goblinroofer.m_onlyInTeleportArea = false;
                 goblinroofer.m_allowedInDungeons = false;
-                goblinroofer.m_center = new Vector3(0f, 0f, 0f);
-                goblinroofer.m_haveCenter = false;
                 goblinroofer.m_spaceRequirement = 0;
                 #endregion
                 #region GoblinRoof45 corner
@@ -201,9 +213,9 @@ namespace MaorBuilds
                 goblinroofer2.m_name = "goblin_roof_45d_corner1";
                 goblinroofer2.m_description = "testing";
                 goblinroofer2.m_canBeRemoved = true;
-                goblinroofer2.m_icon = testSprite;
+                goblinroofer2.m_icon = roof45corner;
                 goblinroofer2.m_primaryTarget = false;
-                goblinroofer2.m_randomTarget = false;
+                goblinroofer2.m_randomTarget = true;
                 goblinroofer2.m_category = Piece.PieceCategory.Building;
                 goblinroofer2.m_enabled = true;
                 goblinroofer2.m_isUpgrade = false;
@@ -218,8 +230,6 @@ namespace MaorBuilds
                 goblinroofer2.m_noClipping = false;
                 goblinroofer2.m_onlyInTeleportArea = false;
                 goblinroofer2.m_allowedInDungeons = false;
-                goblinroofer2.m_center = new Vector3(0f, 0f, 0f);
-                goblinroofer2.m_haveCenter = false;
                 goblinroofer2.m_spaceRequirement = 0;
                 #endregion
                 #region GoblinRoofwall2m
@@ -244,9 +254,9 @@ namespace MaorBuilds
                goblinwallm2.m_name = "goblin_woodwall_2m1";
                goblinwallm2.m_description = "testing";
                goblinwallm2.m_canBeRemoved = true;
-               goblinwallm2.m_icon = testSprite;
+               goblinwallm2.m_icon = woodwall2m;
                goblinwallm2.m_primaryTarget = false;
-               goblinwallm2.m_randomTarget = false;
+               goblinwallm2.m_randomTarget = true;
                goblinwallm2.m_category = Piece.PieceCategory.Building;
                goblinwallm2.m_enabled = true;
                goblinwallm2.m_isUpgrade = false;
@@ -261,8 +271,6 @@ namespace MaorBuilds
                goblinwallm2.m_noClipping = false;
                goblinwallm2.m_onlyInTeleportArea = false;
                goblinwallm2.m_allowedInDungeons = false;
-               goblinwallm2.m_center = new Vector3(0f, 0f, 0f);
-               goblinwallm2.m_haveCenter = false;
                goblinwallm2.m_spaceRequirement = 0;
                 #endregion
                 #region GoblinRoofwall1m
@@ -287,9 +295,9 @@ namespace MaorBuilds
                 goblinwallm1.m_name = "goblin_woodwall_1m1";
                 goblinwallm1.m_description = "testing";
                 goblinwallm1.m_canBeRemoved = true;
-                goblinwallm1.m_icon = testSprite;
+                goblinwallm1.m_icon = woodwall1m;
                 goblinwallm1.m_primaryTarget = false;
-                goblinwallm1.m_randomTarget = false;
+                goblinwallm1.m_randomTarget = true;
                 goblinwallm1.m_category = Piece.PieceCategory.Building;
                 goblinwallm1.m_enabled = true;
                 goblinwallm1.m_isUpgrade = false;
@@ -304,8 +312,6 @@ namespace MaorBuilds
                 goblinwallm1.m_noClipping = false;
                 goblinwallm1.m_onlyInTeleportArea = false;
                 goblinwallm1.m_allowedInDungeons = false;
-                goblinwallm1.m_center = new Vector3(0f, 0f, 0f);
-                goblinwallm1.m_haveCenter = false;
                 goblinwallm1.m_spaceRequirement = 0;
                 #endregion
                 #region GoblinRoofpole
@@ -330,9 +336,9 @@ namespace MaorBuilds
                 GoblinPole.m_name = "goblin_pole1";
                 GoblinPole.m_description = "testing";
                 GoblinPole.m_canBeRemoved = true;
-                GoblinPole.m_icon = testSprite;
+                GoblinPole.m_icon = goblinspike;
                 GoblinPole.m_primaryTarget = false;
-                GoblinPole.m_randomTarget = false;
+                GoblinPole.m_randomTarget = true;
                 GoblinPole.m_category = Piece.PieceCategory.Building;
                 GoblinPole.m_enabled = true;
                 GoblinPole.m_isUpgrade = false;
@@ -347,8 +353,6 @@ namespace MaorBuilds
                 GoblinPole.m_noClipping = false;
                 GoblinPole.m_onlyInTeleportArea = false;
                 GoblinPole.m_allowedInDungeons = false;
-                GoblinPole.m_center = new Vector3(0f, 0f, 0f);
-                GoblinPole.m_haveCenter = false;
                 GoblinPole.m_spaceRequirement = 0;
                 #endregion
                 #region GoblinBanner
@@ -375,7 +379,7 @@ namespace MaorBuilds
                 GoblinBanner.m_canBeRemoved = true;
                 GoblinBanner.m_icon = testSprite;
                 GoblinBanner.m_primaryTarget = false;
-                GoblinBanner.m_randomTarget = false;
+                GoblinBanner.m_randomTarget = true;
                 GoblinBanner.m_category = Piece.PieceCategory.Building;
                 GoblinBanner.m_enabled = true;
                 GoblinBanner.m_isUpgrade = false;
@@ -390,8 +394,6 @@ namespace MaorBuilds
                 GoblinBanner.m_noClipping = false;
                 GoblinBanner.m_onlyInTeleportArea = false;
                 GoblinBanner.m_allowedInDungeons = false;
-                GoblinBanner.m_center = new Vector3(0f, 0f, 0f);
-                GoblinBanner.m_haveCenter = false;
                 GoblinBanner.m_spaceRequirement = 0;
                 #endregion
                 #region DungeonGate
@@ -418,7 +420,7 @@ namespace MaorBuilds
                 DungeonGate.m_canBeRemoved = true;
                 DungeonGate.m_icon = testSprite;
                 DungeonGate.m_primaryTarget = false;
-                DungeonGate.m_randomTarget = false;
+                DungeonGate.m_randomTarget = true;
                 DungeonGate.m_category = Piece.PieceCategory.Building;
                 DungeonGate.m_enabled = true;
                 DungeonGate.m_isUpgrade = false;
@@ -433,13 +435,11 @@ namespace MaorBuilds
                 DungeonGate.m_noClipping = false;
                 DungeonGate.m_onlyInTeleportArea = false;
                 DungeonGate.m_allowedInDungeons = false;
-                DungeonGate.m_center = new Vector3(0f, 0f, 0f);
-                DungeonGate.m_haveCenter = false;
                 DungeonGate.m_spaceRequirement = 0;
                 #endregion
-
+                 
                 #region GoblinSmacker
-                var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_RageAttack");
+                var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_Attack");
                 var smacker = new CustomItem(goblinsmacker, true,
                     new ItemConfig
                     {
@@ -449,14 +449,19 @@ namespace MaorBuilds
                             new RequirementConfig{Item = "Wood", Amount = 1, AmountPerLevel =1}
                         }
                     });
-                var itemDrop = smacker.ItemDrop;
+                var itemDrop =smacker.ItemDrop;
                 itemDrop.m_itemData.m_shared.m_icons = new Sprite[]
                     { testSprite };
+                itemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.OneHandedWeapon;
+                itemDrop.m_itemData.m_shared.m_animationState = ItemDrop.ItemData.AnimationState.OneHanded;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackType = Attack.AttackType.Horizontal;
-                itemDrop.m_itemData.m_shared.m_attack.m_attackAnimation = "battleaxe_attack";
-                itemDrop.m_itemData.m_shared.m_attack.m_currentAttackCainLevel = 3;
+                itemDrop.m_itemData.m_shared.m_attack.m_attackAnimation = "swing_longsword";
+                itemDrop.m_itemData.m_shared.m_attack.m_currentAttackCainLevel = 2;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackRange = 4f;
                 itemDrop.m_itemData.m_shared.m_attack.m_forceMultiplier = 3;
+                itemDrop.m_itemData.m_shared.m_attack.m_resetChainIfHit = DestructibleType.Tree;
+                itemDrop.m_itemData.m_shared.m_attack.m_lastChainDamageMultiplier = 2;
+                itemDrop.m_itemData.m_shared.m_attack.m_hitTerrain = true;
                 itemDrop.m_itemData.m_shared.m_secondaryAttack.m_attackType = Attack.AttackType.Horizontal;
                 itemDrop.m_itemData.m_shared.m_secondaryAttack.m_attackAnimation = "battleaxe_secondary";
                 itemDrop.m_itemData.m_shared.m_maxQuality = 4;
