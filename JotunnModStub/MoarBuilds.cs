@@ -28,6 +28,8 @@ namespace MaorBuilds
         private Sprite roof45corner;
         private Sprite woodwall1m;
         private Sprite woodwall2m;
+        private Sprite dungeongate1;
+        private Sprite goblinbanner1;
         private AssetBundle assetBundle;
         private void Awake()
         {
@@ -39,12 +41,15 @@ namespace MaorBuilds
         {
             assetBundle = AssetUtils.LoadAssetBundleFromResources("sprites", typeof(MoarBuilds).Assembly);
             goblinfence = assetBundle.LoadAsset<Sprite>("goblinfence");
-            goblinspike = assetBundle.LoadAsset<Sprite>("goblinspike");
+            goblinspike = assetBundle.LoadAsset<Sprite>("goblinpsike");
             goblinribwall2m = assetBundle.LoadAsset<Sprite>("goblinribwall2m");
             roof45 = assetBundle.LoadAsset<Sprite>("roof45");
             roof45corner = assetBundle.LoadAsset<Sprite>("Roof45Corner");
             woodwall1m = assetBundle.LoadAsset<Sprite>("woodwall1m");
             woodwall2m = assetBundle.LoadAsset<Sprite>("woodwall2m");
+            dungeongate1 = assetBundle.LoadAsset<Sprite>("dungeongate");
+            goblinbanner1 = assetBundle.LoadAsset<Sprite>("goblinbanner");
+
 
             testTex = AssetUtils.LoadTexture("MoarBuilds/Assets/test_tex.jpg");
             testSprite = Sprite.Create(testTex, new Rect(0f, 0f, testTex.width, testTex.height), Vector2.zero);
@@ -377,7 +382,7 @@ namespace MaorBuilds
                 GoblinBanner.m_name = "goblin_banner1";
                 GoblinBanner.m_description = "testing";
                 GoblinBanner.m_canBeRemoved = true;
-                GoblinBanner.m_icon = testSprite;
+                GoblinBanner.m_icon = goblinbanner1;
                 GoblinBanner.m_primaryTarget = false;
                 GoblinBanner.m_randomTarget = true;
                 GoblinBanner.m_category = Piece.PieceCategory.Building;
@@ -418,7 +423,7 @@ namespace MaorBuilds
                 DungeonGate.m_name = "dungeon_sunkencrypt_irongate1";
                 DungeonGate.m_description = "testing";
                 DungeonGate.m_canBeRemoved = true;
-                DungeonGate.m_icon = testSprite;
+                DungeonGate.m_icon = dungeongate1;
                 DungeonGate.m_primaryTarget = false;
                 DungeonGate.m_randomTarget = true;
                 DungeonGate.m_category = Piece.PieceCategory.Building;
