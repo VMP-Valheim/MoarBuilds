@@ -14,10 +14,9 @@ namespace MaorBuilds
     [BepInDependency(Jotunn.Main.ModGuid)]
     internal class MoarBuilds : BaseUnityPlugin
     {
-        public const string PluginGUID = "com.zarboz.MaorBuilds";
-        public const string PluginName = "MaorBuilds";
+        public const string PluginGUID = "com.zarboz.goblinbuilds";
+        public const string PluginName = "GoblinBuilds";
         public const string PluginVersion = "1.0.0";
-        public static new Jotunn.Logger Logger;
         private Sprite goblinfence;
         private Sprite goblinspike;
         private Sprite goblinribwall2m;
@@ -438,7 +437,7 @@ namespace MaorBuilds
                 DungeonGate.m_allowedInDungeons = false;
                 DungeonGate.m_spaceRequirement = 0;
                 #endregion
-                 
+               
                 #region GoblinSmacker
                 var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_Attack");
                 var smacker = new CustomItem(goblinsmacker, true,
@@ -462,7 +461,10 @@ namespace MaorBuilds
                 itemDrop.m_itemData.m_shared.m_attack.m_attackType = Attack.AttackType.Horizontal;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackAnimation = "swing_longsword";
                 itemDrop.m_itemData.m_shared.m_attack.m_currentAttackCainLevel = 2;
-                itemDrop.m_itemData.m_shared.m_attack.m_attackRange = 4f;
+                itemDrop.m_itemData.m_shared.m_attack.m_attackRange = 5f;
+                itemDrop.m_itemData.m_shared.m_attack.m_attackAngle = 70;
+                itemDrop.m_itemData.m_shared.m_attack.m_attackRayWidth = 0.8f;
+                itemDrop.m_itemData.m_shared.m_attack.m_attackHeight = 1.5f;
                 itemDrop.m_itemData.m_shared.m_attack.m_forceMultiplier = 3;
                 itemDrop.m_itemData.m_shared.m_attack.m_resetChainIfHit = DestructibleType.Tree;
                 itemDrop.m_itemData.m_shared.m_attack.m_lastChainDamageMultiplier = 2;
