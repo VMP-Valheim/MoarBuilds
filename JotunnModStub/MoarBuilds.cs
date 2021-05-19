@@ -18,9 +18,6 @@ namespace MaorBuilds
         public const string PluginName = "MaorBuilds";
         public const string PluginVersion = "1.0.0";
         public static new Jotunn.Logger Logger;
-        private Piece piece;
-        private Texture2D testTex;
-        private Sprite testSprite;
         private Sprite goblinfence;
         private Sprite goblinspike;
         private Sprite goblinribwall2m;
@@ -30,6 +27,7 @@ namespace MaorBuilds
         private Sprite woodwall2m;
         private Sprite dungeongate1;
         private Sprite goblinbanner1;
+        private Sprite goblinsmacker1;
         private AssetBundle assetBundle;
         private void Awake()
         {
@@ -49,10 +47,8 @@ namespace MaorBuilds
             woodwall2m = assetBundle.LoadAsset<Sprite>("woodwall2m");
             dungeongate1 = assetBundle.LoadAsset<Sprite>("dungeongate");
             goblinbanner1 = assetBundle.LoadAsset<Sprite>("goblinbanner");
+            goblinsmacker1 = assetBundle.LoadAsset<Sprite>("goblinsmacker");
 
-
-            testTex = AssetUtils.LoadTexture("MoarBuilds/Assets/test_tex.jpg");
-            testSprite = Sprite.Create(testTex, new Rect(0f, 0f, testTex.width, testTex.height), Vector2.zero);
         }
         private void GrabPieces()
         {
@@ -69,7 +65,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
                
@@ -77,8 +73,8 @@ namespace MaorBuilds
                 test.transform.localPosition = new Vector3(0f, 0f, 0f);
                 test.transform.position = new Vector3(0f, 0f, 0f);
                 var piece = CP.Piece;
-                piece.m_name = "goblin_woodwall_2m_ribs1";
-                piece.m_description = "testing";
+                piece.m_name = "Goblin RibWall";
+                piece.m_description = "A cage of Lox ribs to use as a fence";
                 piece.m_canBeRemoved = true;
                 piece.m_icon = goblinribwall2m;
                 piece.m_primaryTarget = false;
@@ -110,7 +106,7 @@ namespace MaorBuilds
                    AllowedInDungeons = false,
                    Requirements = new[]
                    {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                    }
                });
                 #endregion
@@ -125,7 +121,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -133,8 +129,8 @@ namespace MaorBuilds
                 fence.transform.localPosition = new Vector3(0f, 0f, 0f);
                 fence.transform.position = new Vector3(0f, 0f, 0f);
                 var fencepiece = fencecustom.Piece;
-                fencepiece.m_name = "goblin_fence1";
-                fencepiece.m_description = "testing";
+                fencepiece.m_name = "Goblin Fence";
+                fencepiece.m_description = "Portions of fence from that last village you raided";
                 fencepiece.m_canBeRemoved = true;
                 fencepiece.m_icon = goblinfence;
                 fencepiece.m_primaryTarget = false;
@@ -166,7 +162,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -174,8 +170,8 @@ namespace MaorBuilds
                 goblinroof1.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinroof1.transform.position = new Vector3(0f, 0f, 0f);
                 var goblinroofer = goblinroof_1.Piece;
-                goblinroofer.m_name = "goblin_roof_45d1";
-                goblinroofer.m_description = "testing";
+                goblinroofer.m_name = "Goblin Roof 45";
+                goblinroofer.m_description = "45 Degree Roof from a goblin hut";
                 goblinroofer.m_canBeRemoved = true;
                 goblinroofer.m_icon = roof45;
                 goblinroofer.m_primaryTarget = false;
@@ -207,7 +203,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -215,8 +211,8 @@ namespace MaorBuilds
                 goblinroof2.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinroof2.transform.position = new Vector3(0f, 0f, 0f);
                 var goblinroofer2 = goblinroof_2.Piece;
-                goblinroofer2.m_name = "goblin_roof_45d_corner1";
-                goblinroofer2.m_description = "testing";
+                goblinroofer2.m_name = "Goblin Roof Corner";
+                goblinroofer2.m_description = "Corner piece for a Goblin roof";
                 goblinroofer2.m_canBeRemoved = true;
                 goblinroofer2.m_icon = roof45corner;
                 goblinroofer2.m_primaryTarget = false;
@@ -248,7 +244,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -256,8 +252,8 @@ namespace MaorBuilds
                 goblinroof2.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinroof2.transform.position = new Vector3(0f, 0f, 0f);
                 var goblinwallm2 = goblinwall_2m.Piece;
-               goblinwallm2.m_name = "goblin_woodwall_2m1";
-               goblinwallm2.m_description = "testing";
+               goblinwallm2.m_name = "Goblin Wall 2m";
+               goblinwallm2.m_description = "A 2m long section of wall recovered from the last village you raided";
                goblinwallm2.m_canBeRemoved = true;
                goblinwallm2.m_icon = woodwall2m;
                goblinwallm2.m_primaryTarget = false;
@@ -289,7 +285,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -297,8 +293,8 @@ namespace MaorBuilds
                 goblinwall1m.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinwall1m.transform.position = new Vector3(0f, 0f, 0f);
                 var goblinwallm1 = goblinwall_1m.Piece;
-                goblinwallm1.m_name = "goblin_woodwall_1m1";
-                goblinwallm1.m_description = "testing";
+                goblinwallm1.m_name = "Goblin Wall 1M";
+                goblinwallm1.m_description = "A 1m section of goblin wall from the last village you raided...";
                 goblinwallm1.m_canBeRemoved = true;
                 goblinwallm1.m_icon = woodwall1m;
                 goblinwallm1.m_primaryTarget = false;
@@ -330,7 +326,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -338,8 +334,8 @@ namespace MaorBuilds
                 goblinpole.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinpole.transform.position = new Vector3(0f, 0f, 0f);
                 var GoblinPole = goblin_pole.Piece;
-                GoblinPole.m_name = "goblin_pole1";
-                GoblinPole.m_description = "testing";
+                GoblinPole.m_name = "Goblin Spike";
+                GoblinPole.m_description = "A long spike recovered from that shamans hut";
                 GoblinPole.m_canBeRemoved = true;
                 GoblinPole.m_icon = goblinspike;
                 GoblinPole.m_primaryTarget = false;
@@ -371,7 +367,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
 
@@ -379,8 +375,8 @@ namespace MaorBuilds
                 goblinbanner.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinbanner.transform.position = new Vector3(0f, 0f, 0f);
                 var GoblinBanner = goblin_banner.Piece;
-                GoblinBanner.m_name = "goblin_banner1";
-                GoblinBanner.m_description = "testing";
+                GoblinBanner.m_name = "Goblin Banner";
+                GoblinBanner.m_description = "Hang their flag on your base....";
                 GoblinBanner.m_canBeRemoved = true;
                 GoblinBanner.m_icon = goblinbanner1;
                 GoblinBanner.m_primaryTarget = false;
@@ -412,7 +408,7 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Wood", Amount = 1, Recover = false}
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = false}
                         }
                     });
 
@@ -420,8 +416,8 @@ namespace MaorBuilds
                 dungeongate.transform.localPosition = new Vector3(0f, 0f, 0f);
                 dungeongate.transform.position = new Vector3(0f, 0f, 0f);
                 var DungeonGate = dungeon_gate.Piece;
-                DungeonGate.m_name = "dungeon_sunkencrypt_irongate1";
-                DungeonGate.m_description = "testing";
+                DungeonGate.m_name = "Dungeon Gate";
+                DungeonGate.m_description = "Another metal gate";
                 DungeonGate.m_canBeRemoved = true;
                 DungeonGate.m_icon = dungeongate1;
                 DungeonGate.m_primaryTarget = false;
@@ -451,12 +447,16 @@ namespace MaorBuilds
                         Amount = 1,
                         Requirements = new[]
                         {
-                            new RequirementConfig{Item = "Wood", Amount = 1, AmountPerLevel =1}
+                            new RequirementConfig{Item = "Wood", Amount = 15, AmountPerLevel = 1 },
+                            new RequirementConfig{Item = "Stone", Amount = 10, AmountPerLevel = 20 },
+                            new RequirementConfig{Item = "LeatherScraps", Amount = 10, AmountPerLevel = 10}
                         }
                     });
                 var itemDrop =smacker.ItemDrop;
                 itemDrop.m_itemData.m_shared.m_icons = new Sprite[]
-                    { testSprite };
+                    { goblinsmacker1 };
+                itemDrop.m_itemData.m_shared.m_name = "Goblin Smacker";
+                itemDrop.m_itemData.m_shared.m_description = "A brute dropped this in the plains.. Its heavy.. but man does it feel good to give them a taste of their own medicine";
                 itemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.OneHandedWeapon;
                 itemDrop.m_itemData.m_shared.m_animationState = ItemDrop.ItemData.AnimationState.OneHanded;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackType = Attack.AttackType.Horizontal;
