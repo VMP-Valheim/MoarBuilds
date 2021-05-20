@@ -29,6 +29,7 @@ namespace MaorBuilds
         private Sprite goblinsmacker1;
         private AssetBundle assetBundle;
         private ConfigEntry<bool> GoblinStick;
+        //private GameObject sfxhammer;
         private void Awake()
         {
             SpriteThings();
@@ -61,6 +62,7 @@ namespace MaorBuilds
                 //vfx_Place_wood_roof
                 //vfx_Place_wood_roof
                 //
+              // var sfxhammer = PrefabManager.Cache.GetPrefab<GameObject>("sfx_build_hammer_wood");
                 #region GoblinWoodwallribs
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
@@ -84,7 +86,7 @@ namespace MaorBuilds
                 piece.m_description = "A cage of Lox ribs to use as a fence";
                 piece.m_canBeRemoved = true;
                 piece.m_icon = goblinribwall2m;
-                piece.m_primaryTarget = false;
+                piece.m_primaryTarget = true;
                 piece.m_randomTarget = true;
                 piece.m_category = Piece.PieceCategory.Building;
                 piece.m_enabled = true;
@@ -101,8 +103,10 @@ namespace MaorBuilds
                 piece.m_onlyInTeleportArea = false;
                 piece.m_allowedInDungeons = false;
                 piece.m_center = new Vector3(0f, 0f, 0f);
-                piece.m_haveCenter = false;
+                piece.m_haveCenter = true;
                 piece.m_spaceRequirement = 2;
+
+
                 #endregion
                 #region biggerstonefloor
                 var stonefloornew = PrefabManager.Instance.CreateClonedPrefab("piece_stonefloor_2x2", "stone_floor");
@@ -140,7 +144,7 @@ namespace MaorBuilds
                 fencepiece.m_description = "Portions of fence from that last village you raided";
                 fencepiece.m_canBeRemoved = true;
                 fencepiece.m_icon = goblinfence;
-                fencepiece.m_primaryTarget = false;
+                fencepiece.m_primaryTarget = true;
                 fencepiece.m_randomTarget = true;
                 fencepiece.m_category = Piece.PieceCategory.Building;
                 fencepiece.m_enabled = true;
@@ -304,7 +308,7 @@ namespace MaorBuilds
                 goblinwallm1.m_description = "A 1m section of goblin wall from the last village you raided...";
                 goblinwallm1.m_canBeRemoved = true;
                 goblinwallm1.m_icon = woodwall1m;
-                goblinwallm1.m_primaryTarget = false;
+                goblinwallm1.m_primaryTarget = true;
                 goblinwallm1.m_randomTarget = true;
                 goblinwallm1.m_category = Piece.PieceCategory.Building;
                 goblinwallm1.m_enabled = true;
