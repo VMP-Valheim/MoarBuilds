@@ -28,6 +28,7 @@ namespace MaorBuilds
         private Sprite goblinbanner1;
         private Sprite goblinsmacker1;
         private AssetBundle assetBundle;
+        private ConfigEntry<bool> GoblinStick;
         private void Awake()
         {
             SpriteThings();
@@ -53,6 +54,13 @@ namespace MaorBuilds
         {
             try
             {
+
+                //sfx_build_hammer_wood
+                //vfx_Place_wood_wall_half
+                //vfx_Place_wood_wall_roof
+                //vfx_Place_wood_roof
+                //vfx_Place_wood_roof
+                //
                 #region GoblinWoodwallribs
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
@@ -94,7 +102,7 @@ namespace MaorBuilds
                 piece.m_allowedInDungeons = false;
                 piece.m_center = new Vector3(0f, 0f, 0f);
                 piece.m_haveCenter = false;
-                piece.m_spaceRequirement = 0;
+                piece.m_spaceRequirement = 2;
                 #endregion
                 #region biggerstonefloor
                 var stonefloornew = PrefabManager.Instance.CreateClonedPrefab("piece_stonefloor_2x2", "stone_floor");
@@ -148,7 +156,7 @@ namespace MaorBuilds
                 fencepiece.m_noClipping = false;
                 fencepiece.m_onlyInTeleportArea = false;
                 fencepiece.m_allowedInDungeons = false;
-                fencepiece.m_spaceRequirement = 0;
+                fencepiece.m_spaceRequirement = 2;
                 #endregion
                 #region GoblinRoof45
                 var goblinroof1 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d1", "goblin_roof_45d");
@@ -189,7 +197,7 @@ namespace MaorBuilds
                 goblinroofer.m_noClipping = false;
                 goblinroofer.m_onlyInTeleportArea = false;
                 goblinroofer.m_allowedInDungeons = false;
-                goblinroofer.m_spaceRequirement = 0;
+                goblinroofer.m_spaceRequirement = 2;
                 #endregion
                 #region GoblinRoof45 corner
                 var goblinroof2 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d_corner1", "goblin_roof_45d_corner");
@@ -230,7 +238,7 @@ namespace MaorBuilds
                 goblinroofer2.m_noClipping = false;
                 goblinroofer2.m_onlyInTeleportArea = false;
                 goblinroofer2.m_allowedInDungeons = false;
-                goblinroofer2.m_spaceRequirement = 0;
+                goblinroofer2.m_spaceRequirement = 2;
                 #endregion
                 #region GoblinRoofwall2m
                 var goblinwall2m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m1", "goblin_woodwall_2m");
@@ -271,7 +279,7 @@ namespace MaorBuilds
                goblinwallm2.m_noClipping = false;
                goblinwallm2.m_onlyInTeleportArea = false;
                goblinwallm2.m_allowedInDungeons = false;
-               goblinwallm2.m_spaceRequirement = 0;
+               goblinwallm2.m_spaceRequirement = 2;
                 #endregion
                 #region GoblinRoofwall1m
                 var goblinwall1m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_1m1", "goblin_woodwall_1m");
@@ -312,7 +320,7 @@ namespace MaorBuilds
                 goblinwallm1.m_noClipping = false;
                 goblinwallm1.m_onlyInTeleportArea = false;
                 goblinwallm1.m_allowedInDungeons = false;
-                goblinwallm1.m_spaceRequirement = 0;
+                goblinwallm1.m_spaceRequirement = 2;
                 #endregion
                 #region GoblinRoofpole
                 var goblinpole = PrefabManager.Instance.CreateClonedPrefab("goblin_pole1", "goblin_pole");
@@ -353,7 +361,7 @@ namespace MaorBuilds
                 GoblinPole.m_noClipping = false;
                 GoblinPole.m_onlyInTeleportArea = false;
                 GoblinPole.m_allowedInDungeons = false;
-                GoblinPole.m_spaceRequirement = 0;
+                GoblinPole.m_spaceRequirement = 2;
                 #endregion
                 #region GoblinBanner
                 var goblinbanner = PrefabManager.Instance.CreateClonedPrefab("goblin_banner1", "goblin_banner");
@@ -394,7 +402,7 @@ namespace MaorBuilds
                 GoblinBanner.m_noClipping = false;
                 GoblinBanner.m_onlyInTeleportArea = false;
                 GoblinBanner.m_allowedInDungeons = false;
-                GoblinBanner.m_spaceRequirement = 0;
+                GoblinBanner.m_spaceRequirement = 2;
                 #endregion
                 #region DungeonGate
                 var dungeongate = PrefabManager.Instance.CreateClonedPrefab("dungeon_sunkencrypt_irongate1", "dungeon_sunkencrypt_irongate");
