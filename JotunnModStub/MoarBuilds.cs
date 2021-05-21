@@ -12,6 +12,7 @@ namespace MaorBuilds
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class MoarBuilds : BaseUnityPlugin
     {
         public const string PluginGUID = "com.zarboz.goblinbuilds";
@@ -29,13 +30,20 @@ namespace MaorBuilds
         private Sprite goblinsmacker1;
         private AssetBundle assetBundle;
         private ConfigEntry<bool> GoblinStick;
+
         //private GameObject sfxhammer;
         private void Awake()
         {
+            ConfigThing();
             SpriteThings();
             ItemManager.OnVanillaItemsAvailable += GrabPieces;
         }
 
+        private void ConfigThing()
+        {
+            GoblinStick =  Config.Bind("GoblinStick", "Turn It off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+        }
         private void SpriteThings()
         {
             assetBundle = AssetUtils.LoadAssetBundleFromResources("sprites", typeof(MoarBuilds).Assembly);
@@ -56,12 +64,7 @@ namespace MaorBuilds
             try
             {
 
-                //sfx_build_hammer_wood
-                //vfx_Place_wood_wall_half
-                //vfx_Place_wood_wall_roof
-                //vfx_Place_wood_roof
-                //vfx_Place_wood_roof
-                //
+                //todo add a child component transform to these objects in order to catch some snap points when placing the objects
                 var sfxhammer = PrefabManager.Cache.GetPrefab<GameObject>("sfx_build_hammer_wood");
                 var vfx_Place_wood_roof = PrefabManager.Cache.GetPrefab<GameObject>("vfx_Place_wood_roof");
                 var vfx_Place_wood_wall_roof = PrefabManager.Cache.GetPrefab<GameObject>("vfx_Place_wood_wall_roof");
@@ -72,7 +75,7 @@ namespace MaorBuilds
                 #region GoblinWoodwallribs
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
-               
+                
                 var CP = new CustomPiece(test,
                     new PieceConfig
                     {
@@ -92,7 +95,7 @@ namespace MaorBuilds
                 piece.m_description = "A cage of Lox ribs to use as a fence";
                 piece.m_canBeRemoved = true;
                 piece.m_icon = goblinribwall2m;
-                piece.m_primaryTarget = true;
+                piece.m_primaryTarget = false;
                 piece.m_randomTarget = true;
                 piece.m_category = Piece.PieceCategory.Building;
                 piece.m_enabled = true;
@@ -150,7 +153,7 @@ namespace MaorBuilds
                 fencepiece.m_description = "Portions of fence from that last village you raided";
                 fencepiece.m_canBeRemoved = true;
                 fencepiece.m_icon = goblinfence;
-                fencepiece.m_primaryTarget = true;
+                fencepiece.m_primaryTarget = false;
                 fencepiece.m_randomTarget = true;
                 fencepiece.m_category = Piece.PieceCategory.Building;
                 fencepiece.m_enabled = true;
@@ -318,7 +321,7 @@ namespace MaorBuilds
                 goblinwallm1.m_description = "A 1m section of goblin wall from the last village you raided...";
                 goblinwallm1.m_canBeRemoved = true;
                 goblinwallm1.m_icon = woodwall1m;
-                goblinwallm1.m_primaryTarget = true;
+                goblinwallm1.m_primaryTarget = false;
                 goblinwallm1.m_randomTarget = true;
                 goblinwallm1.m_category = Piece.PieceCategory.Building;
                 goblinwallm1.m_enabled = true;
@@ -471,6 +474,7 @@ namespace MaorBuilds
                     new ItemConfig
                     {
                         Amount = 1,
+                        Enabled = GoblinStick.Value,
                         Requirements = new[]
                         {
                             new RequirementConfig{Item = "Wood", Amount = 15, AmountPerLevel = 1 },
