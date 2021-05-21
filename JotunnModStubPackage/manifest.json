@@ -1,10 +1,11 @@
 {
-    "name": "MasterChef2point0",
-    "version_number": "1.0.2",
-    "website_url": "https://github.com/sbtoonz/JotunnModStub",
-    "description": "This is an update to MasterChef to give it 3d models and a wearable hat!",
+    "name": "MoArBuIlDs",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/sbtoonz/Many-Jotunn-Mods/tree/MaorBuild",
+    "description": "Build a goblin village",
     "dependencies": [
-        "denikson-BepInExPack_Valheim-5.4.1000", 
-		"ValheimModding-Jotunn-2.0.1"
+        "denikson-BepInExPack_Valheim-5.4.1001", 
+		"ValheimModding-Jotunn-2.0.10",
+		"MixoneFinallyHere-BuildExpansion-1.0.8"
     ]
 }

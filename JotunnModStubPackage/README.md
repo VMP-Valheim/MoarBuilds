@@ -1,37 +1,16 @@
 **MOD Description** 
 
-Master Chef 2.0 is a partial remake of Master Chef with 3d models by deBARBA
-Please support his artwork he made some really amazing models for this 
+MoArBuIlDs
+adds... more .. building things to the game lol
 
-You can find him here:
-patreon.com/littleroomdev 
-
-
-I have permission from hrve to remake master chef and can furnish proof if needed 
-
-
-You will get 6 new food items with this mod and 1 new wearable item
-
-Burger
-Blood Sausage
-Broth
-Carrot Butter
-Carrot Butter Jelly Sandwich
-Dragon Omlette
-Fish Stew
-
-
-and finally a Chef Hat as a wearable item. 
+The whole goblin village can now be built
+you also can build the iron gate from the crypts now 
 
 
 ---
 **Installation**
 
-1) Go to [BepInExPack Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/)
-2) Download it and follow the installation manual
-3) Drag the unzipped MasterChef20 folder into -> <Steam Location>\steamapps\common\Valheim\BepInEx\plugin\  
-
-The next time you start your game, the mod will be enabled. To disable it, just remove it from the mods folder.
+Download the mod using TMM or manually install it by tossing in BepInEx/plugins folder
 
 ---
 **Usage**
@@ -42,16 +21,15 @@ Recipes should appear in game through normal play. If you are installing this mo
 I wanna extend a huge thank you to Jotunn team they are amazing and basically enabled me to make this project :D 
 
 --- 
+
+** Known Issues **
+Some objects do not have snap points
+they are cloned objects via code they are not custom made objects therefore I will need to work on adding snap point layers to the objects that were cloned
+
+
 **Changelog**
 
 **v1.0.0**
 
 * initial release 
 
-**v1.0.1**
-
-* readme updates
-
-**v1.0.2**
-
-* readme updates
