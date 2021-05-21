@@ -62,7 +62,7 @@ namespace MaorBuilds
                 //vfx_Place_wood_roof
                 //vfx_Place_wood_roof
                 //
-              // var sfxhammer = PrefabManager.Cache.GetPrefab<GameObject>("sfx_build_hammer_wood");
+                var sfxhammer = PrefabManager.Cache.GetPrefab<GameObject>("sfx_build_hammer_wood");
                 #region GoblinWoodwallribs
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
@@ -448,6 +448,9 @@ namespace MaorBuilds
                 DungeonGate.m_onlyInTeleportArea = false;
                 DungeonGate.m_allowedInDungeons = false;
                 DungeonGate.m_spaceRequirement = 0;
+                EffectList effectList = new EffectList { m_effectPrefabs = new EffectList.EffectData[1] { new EffectList.EffectData { m_prefab = sfxhammer } } };
+                DungeonGate.m_placeEffect = effectList;
+
                 #endregion
                
                 #region GoblinSmacker
