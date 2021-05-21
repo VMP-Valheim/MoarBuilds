@@ -111,7 +111,7 @@ namespace MaorBuilds
                 piece.m_center = new Vector3(0f, 0f, 0f);
                 piece.m_haveCenter = true;
                 piece.m_spaceRequirement = 2;
-
+                piece.m_placeEffect = effectList2;
 
                 #endregion
                 #region biggerstonefloor
@@ -167,6 +167,7 @@ namespace MaorBuilds
                 fencepiece.m_onlyInTeleportArea = false;
                 fencepiece.m_allowedInDungeons = false;
                 fencepiece.m_spaceRequirement = 2;
+                fencepiece.m_placeEffect = effectList2;
                 #endregion
                 #region GoblinRoof45
                 var goblinroof1 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d1", "goblin_roof_45d");
@@ -208,6 +209,7 @@ namespace MaorBuilds
                 goblinroofer.m_onlyInTeleportArea = false;
                 goblinroofer.m_allowedInDungeons = false;
                 goblinroofer.m_spaceRequirement = 2;
+                goblinroofer.m_placeEffect = effectList;
                 #endregion
                 #region GoblinRoof45 corner
                 var goblinroof2 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d_corner1", "goblin_roof_45d_corner");
@@ -249,6 +251,7 @@ namespace MaorBuilds
                 goblinroofer2.m_onlyInTeleportArea = false;
                 goblinroofer2.m_allowedInDungeons = false;
                 goblinroofer2.m_spaceRequirement = 2;
+                goblinroofer2.m_placeEffect = effectList;
                 #endregion
                 #region GoblinRoofwall2m
                 var goblinwall2m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m1", "goblin_woodwall_2m");
@@ -290,6 +293,7 @@ namespace MaorBuilds
                goblinwallm2.m_onlyInTeleportArea = false;
                goblinwallm2.m_allowedInDungeons = false;
                goblinwallm2.m_spaceRequirement = 2;
+                goblinwallm2.m_placeEffect = effectList;
                 #endregion
                 #region GoblinRoofwall1m
                 var goblinwall1m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_1m1", "goblin_woodwall_1m");
@@ -331,6 +335,7 @@ namespace MaorBuilds
                 goblinwallm1.m_onlyInTeleportArea = false;
                 goblinwallm1.m_allowedInDungeons = false;
                 goblinwallm1.m_spaceRequirement = 2;
+                goblinwallm1.m_placeEffect = effectList;
                 #endregion
                 #region GoblinRoofpole
                 var goblinpole = PrefabManager.Instance.CreateClonedPrefab("goblin_pole1", "goblin_pole");
@@ -372,6 +377,7 @@ namespace MaorBuilds
                 GoblinPole.m_onlyInTeleportArea = false;
                 GoblinPole.m_allowedInDungeons = false;
                 GoblinPole.m_spaceRequirement = 2;
+                GoblinPole.m_placeEffect = effectList;
                 #endregion
                 #region GoblinBanner
                 var goblinbanner = PrefabManager.Instance.CreateClonedPrefab("goblin_banner1", "goblin_banner");
@@ -413,6 +419,7 @@ namespace MaorBuilds
                 GoblinBanner.m_onlyInTeleportArea = false;
                 GoblinBanner.m_allowedInDungeons = false;
                 GoblinBanner.m_spaceRequirement = 2;
+                GoblinBanner.m_placeEffect = effectList2;
                 #endregion
                 #region DungeonGate
                 var dungeongate = PrefabManager.Instance.CreateClonedPrefab("dungeon_sunkencrypt_irongate1", "dungeon_sunkencrypt_irongate");
