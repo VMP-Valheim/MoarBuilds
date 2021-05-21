@@ -15,8 +15,8 @@ namespace MaorBuilds
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class MoarBuilds : BaseUnityPlugin
     {
-        public const string PluginGUID = "com.zarboz.goblinbuilds";
-        public const string PluginName = "GoblinBuilds";
+        public const string PluginGUID = "com.zarboz.moarbuilds";
+        public const string PluginName = "MoArBuIlDs";
         public const string PluginVersion = "1.0.0";
         private Sprite goblinfence;
         private Sprite goblinspike;
