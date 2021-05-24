@@ -125,9 +125,9 @@ namespace MaorBuilds
                    PieceTable = "_HammerPieceTable",
                    AllowedInDungeons = false,
                    Requirements = new[]
-                   {
-                             new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
-                   }
+                        {
+                             new RequirementConfig { Item = "Stone", Amount = 15, Recover = false}
+                        }
                });
                 #endregion
                 #region GoblinFence1
