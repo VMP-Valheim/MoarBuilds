@@ -132,6 +132,7 @@ namespace MaorBuilds
                 #endregion
                 #region GoblinFence1
                 var fence = PrefabManager.Instance.CreateClonedPrefab("goblin_fence1", "goblin_fence");
+                Destroy(fence.GetComponent<DropOnDestroyed>());
                 fence.AddComponent<Piece>();
 
                 var fencecustom = new CustomPiece(fence,
@@ -175,7 +176,7 @@ namespace MaorBuilds
                 #region GoblinRoof45
                 var goblinroof1 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d1", "goblin_roof_45d");
                 goblinroof1.AddComponent<Piece>();
-
+                Destroy(goblinroof1.GetComponent<DropOnDestroyed>());
                 var goblinroof_1 = new CustomPiece(goblinroof1,
                     new PieceConfig
                     {
@@ -217,7 +218,7 @@ namespace MaorBuilds
                 #region GoblinRoof45 corner
                 var goblinroof2 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d_corner1", "goblin_roof_45d_corner");
                 goblinroof2.AddComponent<Piece>();
-
+                Destroy(goblinroof2.GetComponent<DropOnDestroyed>());
                 var goblinroof_2 = new CustomPiece(goblinroof2,
                     new PieceConfig
                     {
@@ -259,7 +260,7 @@ namespace MaorBuilds
                 #region GoblinRoofwall2m
                 var goblinwall2m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m1", "goblin_woodwall_2m");
                 goblinwall2m.AddComponent<Piece>();
-
+                Destroy(goblinwall2m.GetComponent<DropOnDestroyed>());
                 var goblinwall_2m = new CustomPiece(goblinwall2m,
                     new PieceConfig
                     {
@@ -301,7 +302,7 @@ namespace MaorBuilds
                 #region GoblinRoofwall1m
                 var goblinwall1m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_1m1", "goblin_woodwall_1m");
                 goblinwall1m.AddComponent<Piece>();
-
+                Destroy(goblinwall1m.GetComponent<DropOnDestroyed>());
                 var goblinwall_1m = new CustomPiece(goblinwall1m,
                     new PieceConfig
                     {
@@ -343,7 +344,7 @@ namespace MaorBuilds
                 #region GoblinRoofpole
                 var goblinpole = PrefabManager.Instance.CreateClonedPrefab("goblin_pole1", "goblin_pole");
                 goblinpole.AddComponent<Piece>();
-
+                Destroy(goblinpole.GetComponent<DropOnDestroyed>());
                 var goblin_pole = new CustomPiece(goblinpole,
                     new PieceConfig
                     {
@@ -385,7 +386,7 @@ namespace MaorBuilds
                 #region GoblinBanner
                 var goblinbanner = PrefabManager.Instance.CreateClonedPrefab("goblin_banner1", "goblin_banner");
                 goblinbanner.AddComponent<Piece>();
-
+                Destroy(goblinbanner.GetComponent<DropOnDestroyed>());
                 var goblin_banner = new CustomPiece(goblinbanner,
                     new PieceConfig
                     {
@@ -427,7 +428,7 @@ namespace MaorBuilds
                 #region DungeonGate
                 var dungeongate = PrefabManager.Instance.CreateClonedPrefab("dungeon_sunkencrypt_irongate1", "dungeon_sunkencrypt_irongate");
                 dungeongate.AddComponent<Piece>();
-
+                //Destroy(dungeongate.GetComponent<DropOnDestroyed>());
                 var dungeon_gate = new CustomPiece(dungeongate,
                     new PieceConfig
                     {

@@ -33,3 +33,7 @@ they are cloned objects via code they are not custom made objects therefore I wi
 
 * initial release 
 
+**v1.0.0** 
+
+gave the 4x4 cloned stone floor from dungeons a stone cost instead of wood
+
