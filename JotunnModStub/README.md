@@ -33,7 +33,9 @@ they are cloned objects via code they are not custom made objects therefore I wi
 
 * initial release 
 
-**v1.0.0** 
+**v1.0.1** 
 
 gave the 4x4 cloned stone floor from dungeons a stone cost instead of wood
 
+**V1.0.2**
+Fixed the drop on destroy for goblin objects giving mats back in plan build mode

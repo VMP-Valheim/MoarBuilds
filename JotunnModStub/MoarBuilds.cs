@@ -75,7 +75,7 @@ namespace MaorBuilds
                 #region GoblinWoodwallribs
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
-                
+                Destroy(test.GetComponent<DropOnDestroyed>());
                 var CP = new CustomPiece(test,
                     new PieceConfig
                     {
@@ -115,7 +115,8 @@ namespace MaorBuilds
                 piece.m_haveCenter = true;
                 piece.m_spaceRequirement = 2;
                 piece.m_placeEffect = effectList2;
-
+                var thing = test.GetComponent<CraftingStation>();
+                thing.m_craftItemEffects = sfxhammer;
                 #endregion
                 #region biggerstonefloor
                 var stonefloornew = PrefabManager.Instance.CreateClonedPrefab("piece_stonefloor_2x2", "stone_floor");
