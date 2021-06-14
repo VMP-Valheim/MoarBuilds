@@ -39,3 +39,8 @@ gave the 4x4 cloned stone floor from dungeons a stone cost instead of wood
 
 **V1.0.2**
 Fixed the drop on destroy for goblin objects giving mats back in plan build mode
+
+
+**V1.0.3**
+
+missed rib walls drop on destroy 

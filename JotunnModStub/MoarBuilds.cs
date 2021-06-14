@@ -115,8 +115,6 @@ namespace MaorBuilds
                 piece.m_haveCenter = true;
                 piece.m_spaceRequirement = 2;
                 piece.m_placeEffect = effectList2;
-                var thing = test.GetComponent<CraftingStation>();
-                thing.m_craftItemEffects = sfxhammer;
                 #endregion
                 #region biggerstonefloor
                 var stonefloornew = PrefabManager.Instance.CreateClonedPrefab("piece_stonefloor_2x2", "stone_floor");
@@ -467,7 +465,50 @@ namespace MaorBuilds
                 DungeonGate.m_allowedInDungeons = false;
                 DungeonGate.m_spaceRequirement = 0;
                 DungeonGate.m_placeEffect = effectList;
+                 
+                #endregion
+                #region Goblinroof
+                var Goblinroof = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
+                Goblinroof.AddComponent<Piece>();
+                Destroy(Goblinroof.GetComponent<DropOnDestroyed>());
+                var Goblin_roof = new CustomPiece(Goblinroof,
+                    new PieceConfig
+                    {
+                        PieceTable = "_HammerPieceTable",
+                        AllowedInDungeons = false,
+                        Requirements = new[]
+                        {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = false}
+                        }
+                    });
 
+                Jotunn.Logger.LogInfo("resetting vectors");
+                var zeropos = new Vector3(0f, 0f, 0f);
+                Goblinroof.transform.localPosition = zeropos;
+                Goblinroof.transform.position = zeropos;
+                Goblin_roof.Piece.m_name = "Goblin Roof Cap";
+                Goblin_roof.Piece.m_description = "Another metal gate";
+                Goblin_roof.Piece.m_canBeRemoved = true;
+                Goblin_roof.Piece.m_icon = dungeongate1;
+                Goblin_roof.Piece.m_primaryTarget = false;
+                Goblin_roof.Piece.m_randomTarget = false;
+                Goblin_roof.Piece.m_category = Piece.PieceCategory.Building;
+                Goblin_roof.Piece.m_enabled = true;
+                Goblin_roof.Piece.m_clipEverything = true;
+                Goblin_roof.Piece.m_isUpgrade = false;
+                Goblin_roof.Piece.m_comfort = 0;
+                Goblin_roof.Piece.m_groundPiece = false;
+                Goblin_roof.Piece.m_allowAltGroundPlacement = false;
+                Goblin_roof.Piece.m_cultivatedGroundOnly = false;
+                Goblin_roof.Piece.m_waterPiece = false;
+                Goblin_roof.Piece.m_noInWater = false;
+                Goblin_roof.Piece.m_notOnWood = false;
+                Goblin_roof.Piece.m_notOnTiltingSurface = false;
+                Goblin_roof.Piece.m_noClipping = false;
+                Goblin_roof.Piece.m_onlyInTeleportArea = false;
+                Goblin_roof.Piece.m_allowedInDungeons = false;
+                Goblin_roof.Piece.m_spaceRequirement = 0;
+                Goblin_roof.Piece.m_placeEffect = effectList;
                 #endregion
                
                 #region GoblinSmacker
@@ -518,6 +559,7 @@ namespace MaorBuilds
                 PieceManager.Instance.AddPiece(goblin_pole);
                 PieceManager.Instance.AddPiece(dungeon_gate);
                 PieceManager.Instance.AddPiece(goblin_banner);
+                PieceManager.Instance.AddPiece(Goblin_roof);
                 #endregion
 
 
