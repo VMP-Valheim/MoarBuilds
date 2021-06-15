@@ -28,6 +28,8 @@ namespace MaorBuilds
         private Sprite dungeongate1;
         private Sprite goblinbanner1;
         private Sprite goblinsmacker1;
+        private AssetBundle spritebundle1;
+        private Sprite capsprite;
         private AssetBundle assetBundle;
         private ConfigEntry<bool> GoblinStick;
 
@@ -57,6 +59,8 @@ namespace MaorBuilds
             dungeongate1 = assetBundle.LoadAsset<Sprite>("dungeongate");
             goblinbanner1 = assetBundle.LoadAsset<Sprite>("goblinbanner");
             goblinsmacker1 = assetBundle.LoadAsset<Sprite>("goblinsmacker");
+            spritebundle1 = AssetUtils.LoadAssetBundleFromResources("capsprite", typeof(MoarBuilds).Assembly);
+            capsprite = spritebundle1.LoadAsset<Sprite>("default");
 
         }
         private void GrabPieces()
@@ -75,7 +79,7 @@ namespace MaorBuilds
                 #region GoblinWoodwallribs
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
-                Destroy(test.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(test.GetComponent<DropOnDestroyed>());
                 var CP = new CustomPiece(test,
                     new PieceConfig
                     {
@@ -131,7 +135,7 @@ namespace MaorBuilds
                 #endregion
                 #region GoblinFence1
                 var fence = PrefabManager.Instance.CreateClonedPrefab("goblin_fence1", "goblin_fence");
-                Destroy(fence.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(fence.GetComponent<DropOnDestroyed>());
                 fence.AddComponent<Piece>();
 
                 var fencecustom = new CustomPiece(fence,
@@ -175,7 +179,7 @@ namespace MaorBuilds
                 #region GoblinRoof45
                 var goblinroof1 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d1", "goblin_roof_45d");
                 goblinroof1.AddComponent<Piece>();
-                Destroy(goblinroof1.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(goblinroof1.GetComponent<DropOnDestroyed>());
                 var goblinroof_1 = new CustomPiece(goblinroof1,
                     new PieceConfig
                     {
@@ -217,7 +221,7 @@ namespace MaorBuilds
                 #region GoblinRoof45 corner
                 var goblinroof2 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d_corner1", "goblin_roof_45d_corner");
                 goblinroof2.AddComponent<Piece>();
-                Destroy(goblinroof2.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(goblinroof2.GetComponent<DropOnDestroyed>());
                 var goblinroof_2 = new CustomPiece(goblinroof2,
                     new PieceConfig
                     {
@@ -259,7 +263,7 @@ namespace MaorBuilds
                 #region GoblinRoofwall2m
                 var goblinwall2m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m1", "goblin_woodwall_2m");
                 goblinwall2m.AddComponent<Piece>();
-                Destroy(goblinwall2m.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(goblinwall2m.GetComponent<DropOnDestroyed>());
                 var goblinwall_2m = new CustomPiece(goblinwall2m,
                     new PieceConfig
                     {
@@ -301,7 +305,7 @@ namespace MaorBuilds
                 #region GoblinRoofwall1m
                 var goblinwall1m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_1m1", "goblin_woodwall_1m");
                 goblinwall1m.AddComponent<Piece>();
-                Destroy(goblinwall1m.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(goblinwall1m.GetComponent<DropOnDestroyed>());
                 var goblinwall_1m = new CustomPiece(goblinwall1m,
                     new PieceConfig
                     {
@@ -343,7 +347,7 @@ namespace MaorBuilds
                 #region GoblinRoofpole
                 var goblinpole = PrefabManager.Instance.CreateClonedPrefab("goblin_pole1", "goblin_pole");
                 goblinpole.AddComponent<Piece>();
-                Destroy(goblinpole.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(goblinpole.GetComponent<DropOnDestroyed>());
                 var goblin_pole = new CustomPiece(goblinpole,
                     new PieceConfig
                     {
@@ -385,7 +389,7 @@ namespace MaorBuilds
                 #region GoblinBanner
                 var goblinbanner = PrefabManager.Instance.CreateClonedPrefab("goblin_banner1", "goblin_banner");
                 goblinbanner.AddComponent<Piece>();
-                Destroy(goblinbanner.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(goblinbanner.GetComponent<DropOnDestroyed>());
                 var goblin_banner = new CustomPiece(goblinbanner,
                     new PieceConfig
                     {
@@ -470,7 +474,7 @@ namespace MaorBuilds
                 #region Goblinroof
                 var Goblinroof = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
                 Goblinroof.AddComponent<Piece>();
-                Destroy(Goblinroof.GetComponent<DropOnDestroyed>());
+                DestroyImmediate(Goblinroof.GetComponent<DropOnDestroyed>());
                 var Goblin_roof = new CustomPiece(Goblinroof,
                     new PieceConfig
                     {
@@ -487,9 +491,9 @@ namespace MaorBuilds
                 Goblinroof.transform.localPosition = zeropos;
                 Goblinroof.transform.position = zeropos;
                 Goblin_roof.Piece.m_name = "Goblin Roof Cap";
-                Goblin_roof.Piece.m_description = "Another metal gate";
+                Goblin_roof.Piece.m_description = "A nice round roof cap from a Goblin camp";
                 Goblin_roof.Piece.m_canBeRemoved = true;
-                Goblin_roof.Piece.m_icon = dungeongate1;
+                Goblin_roof.Piece.m_icon = capsprite;
                 Goblin_roof.Piece.m_primaryTarget = false;
                 Goblin_roof.Piece.m_randomTarget = false;
                 Goblin_roof.Piece.m_category = Piece.PieceCategory.Building;

@@ -84,11 +84,11 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Package\capsprite" />
     <None Include="Package\README.md" />
     <EmbeddedResource Include="sprites" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AssetsEmbedded\" />
     <Folder Include="Package\plugins\" />
   </ItemGroup>
   <ItemGroup>
