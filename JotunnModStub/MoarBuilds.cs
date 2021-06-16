@@ -12,12 +12,12 @@ namespace MaorBuilds
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.None)]
     internal class MoarBuilds : BaseUnityPlugin
     {
         public const string PluginGUID = "com.zarboz.moarbuilds";
         public const string PluginName = "MoArBuIlDs";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.4";
         private Sprite goblinfence;
         private Sprite goblinspike;
         private Sprite goblinribwall2m;
@@ -514,7 +514,55 @@ namespace MaorBuilds
                 Goblin_roof.Piece.m_spaceRequirement = 0;
                 Goblin_roof.Piece.m_placeEffect = effectList;
                 #endregion
-               
+                #region Barrel
+                var Barrel = PrefabManager.Instance.CreateClonedPrefab("Barrel_container", "barrel");
+                Barrel.AddComponent<Piece>();
+                DestroyImmediate(Goblinroof.GetComponent<DropOnDestroyed>());
+                var BarrelBox = new CustomPiece(Goblinroof,
+                    new PieceConfig
+                    {
+                        PieceTable = "_HammerPieceTable",
+                        AllowedInDungeons = false,
+                        Requirements = new[]
+                        {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                        }
+                    });
+
+                Jotunn.Logger.LogInfo("resetting vectors");
+                Barrel.transform.localPosition = zeropos;
+                Barrel.transform.position = zeropos;
+                BarrelBox.Piece.m_name = "Barrel";
+                BarrelBox.Piece.m_description = "A Barrel for holding things";
+                BarrelBox.Piece.m_canBeRemoved = true;
+                BarrelBox.Piece.m_icon = capsprite;
+                BarrelBox.Piece.m_primaryTarget = false;
+                BarrelBox.Piece.m_randomTarget = false;
+                BarrelBox.Piece.m_category = Piece.PieceCategory.Building;
+                BarrelBox.Piece.m_enabled = true;
+                BarrelBox.Piece.m_clipEverything = true;
+                BarrelBox.Piece.m_isUpgrade = false;
+                BarrelBox.Piece.m_comfort = 0;
+                BarrelBox.Piece.m_groundPiece = false;
+                BarrelBox.Piece.m_allowAltGroundPlacement = false;
+                BarrelBox.Piece.m_cultivatedGroundOnly = false;
+                BarrelBox.Piece.m_waterPiece = false;
+                BarrelBox.Piece.m_noInWater = false;
+                BarrelBox.Piece.m_notOnWood = false;
+                BarrelBox.Piece.m_notOnTiltingSurface = false;
+                BarrelBox.Piece.m_noClipping = false;
+                BarrelBox.Piece.m_onlyInTeleportArea = false;
+                BarrelBox.Piece.m_allowedInDungeons = false;
+                BarrelBox.Piece.m_spaceRequirement = 0;
+                BarrelBox.Piece.m_placeEffect = effectList;
+                var box = Barrel.AddComponent<Container>();
+                box.m_name = "Barrel";
+                box.m_width = 4;
+                box.m_height = 2;
+                box.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("CargoCrate").GetComponent<Container>().m_bkg;
+
+                #endregion
                 #region GoblinSmacker
                 var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_Attack");
                 var smacker = new CustomItem(goblinsmacker, true,
@@ -564,6 +612,8 @@ namespace MaorBuilds
                 PieceManager.Instance.AddPiece(dungeon_gate);
                 PieceManager.Instance.AddPiece(goblin_banner);
                 PieceManager.Instance.AddPiece(Goblin_roof);
+                PieceManager.Instance.AddPiece(BarrelBox);
+
                 #endregion
 
 
