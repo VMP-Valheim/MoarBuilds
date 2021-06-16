@@ -30,10 +30,12 @@ namespace MaorBuilds
         private Sprite goblinsmacker1;
         private AssetBundle spritebundle1;
         private Sprite capsprite;
+        private Sprite barrelsprite;
         private AssetBundle assetBundle;
         private ConfigEntry<bool> GoblinStick;
-
-        //private GameObject sfxhammer;
+        private ConfigEntry<int> BarrelWidth;
+        private ConfigEntry<int> BarrelHeight;
+        private EffectList effectList;
         private void Awake()
         {
             ConfigThing();
@@ -44,7 +46,8 @@ namespace MaorBuilds
         private void ConfigThing()
         {
             GoblinStick =  Config.Bind("GoblinStick", "Turn It off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
+            BarrelHeight = Config.Bind("Barrel Size", "Barrel Height", 0, new ConfigDescription("Container Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BarrelWidth = Config.Bind("Barrel Size", "Barrel Width", 0, new ConfigDescription("Container Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
         private void SpriteThings()
         {
@@ -61,8 +64,10 @@ namespace MaorBuilds
             goblinsmacker1 = assetBundle.LoadAsset<Sprite>("goblinsmacker");
             spritebundle1 = AssetUtils.LoadAssetBundleFromResources("capsprite", typeof(MoarBuilds).Assembly);
             capsprite = spritebundle1.LoadAsset<Sprite>("default");
+            barrelsprite = spritebundle1.LoadAsset<Sprite>("barrel_icon");
 
         }
+
         private void GrabPieces()
         {
             try
@@ -73,7 +78,7 @@ namespace MaorBuilds
                 var vfx_Place_wood_roof = PrefabManager.Cache.GetPrefab<GameObject>("vfx_Place_wood_roof");
                 var vfx_Place_wood_wall_roof = PrefabManager.Cache.GetPrefab<GameObject>("vfx_Place_wood_wall_roof");
                 var vfx_Place_wood_wall_half = PrefabManager.Cache.GetPrefab<GameObject>("vfx_Place_wood_wall_half");
-                EffectList effectList = new EffectList { m_effectPrefabs = new EffectList.EffectData[2] { new EffectList.EffectData { m_prefab = sfxhammer }, new EffectList.EffectData { m_prefab = vfx_Place_wood_roof } } };
+                effectList = new EffectList { m_effectPrefabs = new EffectList.EffectData[2] { new EffectList.EffectData { m_prefab = sfxhammer }, new EffectList.EffectData { m_prefab = vfx_Place_wood_roof } } };
                 EffectList effectList2 = new EffectList { m_effectPrefabs = new EffectList.EffectData[2] { new EffectList.EffectData { m_prefab = sfxhammer }, new EffectList.EffectData { m_prefab = vfx_Place_wood_wall_half } } };
 
                 #region GoblinWoodwallribs
@@ -515,10 +520,21 @@ namespace MaorBuilds
                 Goblin_roof.Piece.m_placeEffect = effectList;
                 #endregion
                 #region Barrel
-                var Barrel = PrefabManager.Instance.CreateClonedPrefab("Barrel_container", "barrel");
+                var Barrel = PrefabManager.Instance.CreateClonedPrefab("Boxthing", "barrell");
                 Barrel.AddComponent<Piece>();
-                DestroyImmediate(Goblinroof.GetComponent<DropOnDestroyed>());
-                var BarrelBox = new CustomPiece(Goblinroof,
+                Barrel.AddComponent<ZSyncTransform>();
+                var view = Barrel.AddComponent<ZNetView>();
+                view.m_persistent = true;
+                
+                Barrel.transform.localScale = new Vector3(2f, 2f, 2f);
+                var ctn = Barrel.AddComponent<Container>();
+                ctn.m_width = BarrelWidth.Value;
+                ctn.m_height = BarrelHeight.Value;
+                ctn.m_name = "Barrell";
+                ctn.m_checkGuardStone = true;
+                
+                DestroyImmediate(Barrel.GetComponent<DropOnDestroyed>());
+                var BarrelBox = new CustomPiece(Barrel,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -531,12 +547,12 @@ namespace MaorBuilds
                     });
 
                 Jotunn.Logger.LogInfo("resetting vectors");
-                Barrel.transform.localPosition = zeropos;
-                Barrel.transform.position = zeropos;
+                Barrel.transform.localPosition = new Vector3(0f, 0f, 0f);
+                Barrel.transform.position = new Vector3(0f, 0f, 0f);
                 BarrelBox.Piece.m_name = "Barrel";
                 BarrelBox.Piece.m_description = "A Barrel for holding things";
                 BarrelBox.Piece.m_canBeRemoved = true;
-                BarrelBox.Piece.m_icon = capsprite;
+                BarrelBox.Piece.m_icon = barrelsprite;
                 BarrelBox.Piece.m_primaryTarget = false;
                 BarrelBox.Piece.m_randomTarget = false;
                 BarrelBox.Piece.m_category = Piece.PieceCategory.Building;
@@ -556,12 +572,6 @@ namespace MaorBuilds
                 BarrelBox.Piece.m_allowedInDungeons = false;
                 BarrelBox.Piece.m_spaceRequirement = 0;
                 BarrelBox.Piece.m_placeEffect = effectList;
-                var box = Barrel.AddComponent<Container>();
-                box.m_name = "Barrel";
-                box.m_width = 4;
-                box.m_height = 2;
-                box.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("CargoCrate").GetComponent<Container>().m_bkg;
-
                 #endregion
                 #region GoblinSmacker
                 var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_Attack");
@@ -613,7 +623,6 @@ namespace MaorBuilds
                 PieceManager.Instance.AddPiece(goblin_banner);
                 PieceManager.Instance.AddPiece(Goblin_roof);
                 PieceManager.Instance.AddPiece(BarrelBox);
-
                 #endregion
 
 
