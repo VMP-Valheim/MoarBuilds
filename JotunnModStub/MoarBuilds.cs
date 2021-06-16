@@ -46,8 +46,8 @@ namespace MaorBuilds
         private void ConfigThing()
         {
             GoblinStick =  Config.Bind("GoblinStick", "Turn It off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            BarrelHeight = Config.Bind("Barrel Size", "Barrel Height", 0, new ConfigDescription("Container Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            BarrelWidth = Config.Bind("Barrel Size", "Barrel Width", 0, new ConfigDescription("Container Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BarrelHeight = Config.Bind("Barrel Size", "Barrel Height", 4, new ConfigDescription("Container Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BarrelWidth = Config.Bind("Barrel Size", "Barrel Width", 4, new ConfigDescription("Container Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
         private void SpriteThings()
         {
