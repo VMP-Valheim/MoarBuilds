@@ -17,7 +17,7 @@ namespace MaorBuilds
     {
         public const string PluginGUID = "com.zarboz.moarbuilds";
         public const string PluginName = "MoArBuIlDs";
-        public const string PluginVersion = "1.0.4";
+        public const string PluginVersion = "1.0.6";
         private Sprite goblinfence;
         private Sprite goblinspike;
         private Sprite goblinribwall2m;
@@ -31,26 +31,86 @@ namespace MaorBuilds
         private AssetBundle spritebundle1;
         private Sprite capsprite;
         private Sprite barrelsprite;
+        private Sprite basketsprite;
+        private Sprite barrelaltsprite;
+        private Sprite boxsprite;
+        private Sprite chestsprite;
         private AssetBundle assetBundle;
         private ConfigEntry<bool> GoblinStick;
         private ConfigEntry<int> BarrelWidth;
+        private ConfigEntry<int> chestheight;
+        private ConfigEntry<int> chestwidth;
+        private ConfigEntry<int> basketheight;
+        private ConfigEntry<int> basketwidth;
+        private ConfigEntry<int> altbarrelheight;
+        private ConfigEntry<int> altbarrelwidth;
+        private ConfigEntry<int> crateheight;
+        private ConfigEntry<int> cratewidth;
         private ConfigEntry<int> BarrelHeight;
         private EffectList effectList;
+        private AssetBundle clutterassets;
+        private Container roundchest;
+        private Container cratechest;
+        private Container basketchest;
+        private Container ctn;
+        private Container barrell3chest;
+
         private void Awake()
         {
             ConfigThing();
             SpriteThings();
             ItemManager.OnVanillaItemsAvailable += GrabPieces;
+              SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
+            {
+                if (attr.InitialSynchronization)
+                {
+                    Jotunn.Logger.LogMessage("Initial Config sync event received");
+                    configsyncheard();
+                }
+                else
+                {
+                    Jotunn.Logger.LogMessage("Config sync event received");
+                }
+            };
+        }
+
+        private void configsyncheard()
+        {
+            ctn.m_width = (int)chestwidth.Value;
+            ctn.m_height = (int)chestheight.Value;
+            basketchest.m_width = (int)basketwidth.Value;
+            basketchest.m_height = (int)basketheight.Value;
+            barrell3chest.m_width = (int)altbarrelwidth.Value;
+            barrell3chest.m_height = (int)altbarrelheight.Value;
+            cratechest.m_width = (int)cratewidth.Value;
+            cratechest.m_height = (int)crateheight.Value;
+
         }
 
         private void ConfigThing()
         {
-            GoblinStick =  Config.Bind("GoblinStick", "Turn It off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            BarrelHeight = Config.Bind("Barrel Size", "Barrel Height", 4, new ConfigDescription("Container Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            BarrelWidth = Config.Bind("Barrel Size", "Barrel Width", 4, new ConfigDescription("Container Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-        }
+            GoblinStick =  Config.Bind("GoblinStick", "Turn Goblin Brute Weapon off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            BarrelHeight = Config.Bind("Barrel Size", "Barrel Container Height", 4, new ConfigDescription("Container Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BarrelWidth = Config.Bind("Barrel Size", "Barrel Container Width", 4, new ConfigDescription("Container Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            chestheight = Config.Bind("Chest Size", "Chest Container Height", 4, new ConfigDescription("Container Height for Chest", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            chestwidth = Config.Bind("Chest Size", "Chest Container Width", 4, new ConfigDescription("Container Width for Chest", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            basketheight = Config.Bind("Basket Size", "Basket Container Height", 4, new ConfigDescription("Container Height for Basket", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            basketwidth = Config.Bind("Basket Size", "Basket Container Width", 4, new ConfigDescription("Container Width for Basket", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            altbarrelheight = Config.Bind("AltBarrel Size", "AltBarrel Container Height", 4, new ConfigDescription("Container Height for AltBarrel", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            altbarrelwidth = Config.Bind("AltBarrel Size", "AltBarrel Width", 4, new ConfigDescription("Container Width for AltBarrel", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            crateheight = Config.Bind("Crate Size", "Crate Container Height", 4, new ConfigDescription("Crate Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            cratewidth = Config.Bind("Crate Size", "Crate Container Width", 4, new ConfigDescription("Crate Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            }
         private void SpriteThings()
         {
+
+            spritebundle1 = AssetUtils.LoadAssetBundleFromResources("capsprite", typeof(MoarBuilds).Assembly);
             assetBundle = AssetUtils.LoadAssetBundleFromResources("sprites", typeof(MoarBuilds).Assembly);
             goblinfence = assetBundle.LoadAsset<Sprite>("goblinfence");
             goblinspike = assetBundle.LoadAsset<Sprite>("goblinpsike");
@@ -62,9 +122,323 @@ namespace MaorBuilds
             dungeongate1 = assetBundle.LoadAsset<Sprite>("dungeongate");
             goblinbanner1 = assetBundle.LoadAsset<Sprite>("goblinbanner");
             goblinsmacker1 = assetBundle.LoadAsset<Sprite>("goblinsmacker");
-            spritebundle1 = AssetUtils.LoadAssetBundleFromResources("capsprite", typeof(MoarBuilds).Assembly);
             capsprite = spritebundle1.LoadAsset<Sprite>("default");
             barrelsprite = spritebundle1.LoadAsset<Sprite>("barrel_icon");
+            basketsprite = spritebundle1.LoadAsset<Sprite>("basket");
+            barrelaltsprite = spritebundle1.LoadAsset<Sprite>("barrelalt");
+            boxsprite = spritebundle1.LoadAsset<Sprite>("boxes");
+            chestsprite = spritebundle1.LoadAsset<Sprite>("chest");
+        }
+          
+        private void LoadAssets()
+        {
+            clutterassets = AssetUtils.LoadAssetBundleFromResources("containerclutter", typeof(MoarBuilds).Assembly);
+            var chest1 = clutterassets.LoadAsset<GameObject>("TraderChest_static");
+            var basket = clutterassets.LoadAsset<GameObject>("fi_vil_container_basket02_closed");
+            var barrell3 = clutterassets.LoadAsset<GameObject>("fi_vil_container_barrel_small"); 
+            var roundbarrel = clutterassets.LoadAsset<GameObject>("default");
+            var crate = clutterassets.LoadAsset<GameObject>("fi_vil_container_crate_big_x4_01");
+
+            #region Chest1
+            chest1.AddComponent<Piece>();
+            var transf = chest1.AddComponent<ZSyncTransform>();
+            transf.m_syncRotation = true;
+            transf.m_syncScale = true;
+            transf.m_syncPosition = true;
+
+            var view = chest1.AddComponent<ZNetView>();
+            view.m_persistent = true;
+
+
+            ctn = chest1.AddComponent<Container>();
+            ctn.m_width = (int)chestwidth.Value;
+            ctn.m_height = (int)chestheight.Value;
+            ctn.m_name = "Trader Chest";
+            ctn.m_checkGuardStone = true;
+
+            var chestbox = new CustomPiece(chest1,
+                new PieceConfig
+                {
+                    PieceTable = "_HammerPieceTable",
+                    AllowedInDungeons = false,
+                    Requirements = new[]
+                    {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                    }
+                });
+
+            chestbox.Piece.m_name = "Trader Chest";
+            chestbox.Piece.m_description = "Traders Chest for holding things";
+            chestbox.Piece.m_canBeRemoved = true;
+            chestbox.Piece.m_icon = chestsprite;
+            chestbox.Piece.m_primaryTarget = false;
+            chestbox.Piece.m_randomTarget = false;
+            chestbox.Piece.m_category = Piece.PieceCategory.Building;
+            chestbox.Piece.m_enabled = true;
+            chestbox.Piece.m_clipEverything = true;
+            chestbox.Piece.m_isUpgrade = false;
+            chestbox.Piece.m_comfort = 0;
+            chestbox.Piece.m_groundPiece = false;
+            chestbox.Piece.m_allowAltGroundPlacement = false;
+            chestbox.Piece.m_cultivatedGroundOnly = false;
+            chestbox.Piece.m_waterPiece = false;
+            chestbox.Piece.m_noInWater = false;
+            chestbox.Piece.m_notOnWood = false;
+            chestbox.Piece.m_notOnTiltingSurface = false;
+            chestbox.Piece.m_noClipping = false;
+            chestbox.Piece.m_onlyInTeleportArea = false;
+            chestbox.Piece.m_allowedInDungeons = false;
+            chestbox.Piece.m_spaceRequirement = 0;
+            chestbox.Piece.m_placeEffect = effectList;
+
+            var wearntear = chest1.AddComponent<WearNTear>();
+            wearntear.m_health = 1000f;
+            PieceManager.Instance.AddPiece(chestbox);
+            #endregion
+
+            #region Basket
+
+            basket.transform.localScale = new Vector3(1.75f, 1.75f, 1.75f);
+            basket.AddComponent<Piece>();
+            var znetview = basket.AddComponent<ZNetView>();
+            znetview.m_persistent = true;
+            znetview.m_type = ZDO.ObjectType.Solid;
+            
+            var transform4 = basket.AddComponent<ZSyncTransform>();
+            transform4.m_syncRotation = true;
+            transform4.m_syncScale = true;
+            transform4.m_syncPosition = true;
+
+            basketchest = basket.AddComponent<Container>();
+            basket.transform.position = new Vector3(0f, 0f, 0f);
+            basket.transform.localPosition = new Vector3(0f, 0f, 0f);
+            basketchest.m_width = (int)basketwidth.Value;
+            basketchest.m_height = (int)basketheight.Value;
+            basketchest.m_name = "Traders Basket";
+            basketchest.m_checkGuardStone = true;
+
+            var BasketRecipe = new CustomPiece(basket,
+                new PieceConfig
+                {
+
+                    PieceTable = "_HammerPieceTable",
+                    AllowedInDungeons = false,
+                    Requirements = new[]
+                    {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                    }
+                });
+            BasketRecipe.Piece.m_name = "Traders Basket";
+            BasketRecipe.Piece.m_description = "Traders Basket for holding things";
+            BasketRecipe.Piece.m_canBeRemoved = true;
+            BasketRecipe.Piece.m_icon = basketsprite;
+            BasketRecipe.Piece.m_primaryTarget = false;
+            BasketRecipe.Piece.m_randomTarget = false;
+            BasketRecipe.Piece.m_category = Piece.PieceCategory.Building;
+            BasketRecipe.Piece.m_enabled = true;
+            BasketRecipe.Piece.m_clipEverything = true;
+            BasketRecipe.Piece.m_isUpgrade = false;
+            BasketRecipe.Piece.m_comfort = 0;
+            BasketRecipe.Piece.m_groundPiece = false;
+            BasketRecipe.Piece.m_allowAltGroundPlacement = false;
+            BasketRecipe.Piece.m_cultivatedGroundOnly = false;
+            BasketRecipe.Piece.m_waterPiece = false;
+            BasketRecipe.Piece.m_noInWater = false;
+            BasketRecipe.Piece.m_notOnWood = false;
+            BasketRecipe.Piece.m_notOnTiltingSurface = false;
+            BasketRecipe.Piece.m_noClipping = false;
+            BasketRecipe.Piece.m_onlyInTeleportArea = false;
+            BasketRecipe.Piece.m_allowedInDungeons = false;
+            BasketRecipe.Piece.m_spaceRequirement = 0;
+            BasketRecipe.Piece.m_placeEffect = effectList;
+            PieceManager.Instance.AddPiece(BasketRecipe);
+            #endregion
+
+            #region Barrel3
+            barrell3.AddComponent<Piece>();
+            var testviiew = barrell3.AddComponent<ZNetView>();
+            Vector3 scale =new Vector3(1.5f, 1.5f, 1.5f);
+            testviiew.SetLocalScale(scale);
+            testviiew.m_persistent = true;
+            var transform5 = barrell3.AddComponent<ZSyncTransform>();
+            transform5.m_syncRotation = true;
+            transform5.m_syncScale = true;
+            transform5.m_syncPosition = true;
+            barrell3chest = barrell3.AddComponent<Container>();
+            barrell3.transform.position = new Vector3(0f, 0f, 0f);
+            barrell3.transform.localPosition = new Vector3(0f, 0f, 0f);
+            barrell3.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+
+            barrell3chest.m_width = (int)altbarrelwidth.Value;
+            barrell3chest.m_height = (int)altbarrelheight.Value;
+            barrell3chest.m_name = "Trader round barrel";
+            barrell3chest.m_checkGuardStone = true;
+
+            var barrelrecip3 = new CustomPiece(barrell3,
+                new PieceConfig
+                {
+
+                    PieceTable = "_HammerPieceTable",
+                    AllowedInDungeons = false,
+                    Requirements = new[]
+                    {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                    }
+                });
+            barrelrecip3.Piece.m_name = "Trader round barrel";
+            barrelrecip3.Piece.m_description = "Trader round barrel for holding things";
+            barrelrecip3.Piece.m_canBeRemoved = true;
+            barrelrecip3.Piece.m_icon = barrelaltsprite;
+            barrelrecip3.Piece.m_primaryTarget = false;
+            barrelrecip3.Piece.m_randomTarget = false;
+            barrelrecip3.Piece.m_category = Piece.PieceCategory.Building;
+            barrelrecip3.Piece.m_enabled = true;
+            barrelrecip3.Piece.m_clipEverything = true;
+            barrelrecip3.Piece.m_isUpgrade = false;
+            barrelrecip3.Piece.m_comfort = 0;
+            barrelrecip3.Piece.m_groundPiece = false;
+            barrelrecip3.Piece.m_allowAltGroundPlacement = false;
+            barrelrecip3.Piece.m_cultivatedGroundOnly = false;
+            barrelrecip3.Piece.m_waterPiece = false;
+            barrelrecip3.Piece.m_noInWater = false;
+            barrelrecip3.Piece.m_notOnWood = false;
+            barrelrecip3.Piece.m_notOnTiltingSurface = false;
+            barrelrecip3.Piece.m_noClipping = false;
+            barrelrecip3.Piece.m_onlyInTeleportArea = false;
+            barrelrecip3.Piece.m_allowedInDungeons = false;
+            barrelrecip3.Piece.m_spaceRequirement = 0;
+            barrelrecip3.Piece.m_placeEffect = effectList;
+
+            var thangg = barrell3.AddComponent<WearNTear>();
+            thangg.m_health = 1000f;
+
+            PieceManager.Instance.AddPiece(barrelrecip3);
+            #endregion
+
+            #region round barrel
+            roundbarrel.AddComponent<Piece>();
+            var netview = roundbarrel.AddComponent<ZNetView>();
+            var transform2 = roundbarrel.AddComponent<ZSyncTransform>();
+            transform2.m_syncPosition = true;
+            transform2.m_syncScale = true;
+            transform2.m_syncRotation = true;
+            netview.m_syncInitialScale = true;
+            netview.m_type = ZDO.ObjectType.Solid;
+            netview.m_persistent = true;
+
+            roundchest = roundbarrel.AddComponent<Container>();
+            roundbarrel.transform.position = new Vector3(0f, 3f, 0f);
+            roundbarrel.transform.localPosition = new Vector3(0f, 3f, 0f);
+            roundchest.m_width = (int)BarrelWidth.Value;
+            roundchest.m_height = (int)BarrelHeight.Value;
+            roundchest.m_name = "Trader round2 barrel";
+            roundchest.m_checkGuardStone = true;
+
+            var roundchestrecipe = new CustomPiece(roundbarrel,
+                new PieceConfig
+                {
+
+                    PieceTable = "_HammerPieceTable",
+                    AllowedInDungeons = false,
+                    Requirements = new[]
+                    {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                    }
+                });
+            roundchestrecipe.Piece.m_name = "Trader round2 barrel";
+            roundchestrecipe.Piece.m_description = "A Barrel for holding things";
+            roundchestrecipe.Piece.m_canBeRemoved = true;
+            roundchestrecipe.Piece.m_icon = barrelsprite;
+            roundchestrecipe.Piece.m_primaryTarget = false;
+            roundchestrecipe.Piece.m_randomTarget = false;
+            roundchestrecipe.Piece.m_category = Piece.PieceCategory.Building;
+            roundchestrecipe.Piece.m_enabled = true;
+            roundchestrecipe.Piece.m_clipEverything = true;
+            roundchestrecipe.Piece.m_isUpgrade = false;
+            roundchestrecipe.Piece.m_comfort = 0;
+            roundchestrecipe.Piece.m_groundPiece = false;
+            roundchestrecipe.Piece.m_allowAltGroundPlacement = false;
+            roundchestrecipe.Piece.m_cultivatedGroundOnly = false;
+            roundchestrecipe.Piece.m_waterPiece = false;
+            roundchestrecipe.Piece.m_noInWater = false;
+            roundchestrecipe.Piece.m_notOnWood = false;
+            roundchestrecipe.Piece.m_notOnTiltingSurface = false;
+            roundchestrecipe.Piece.m_noClipping = false;
+            roundchestrecipe.Piece.m_onlyInTeleportArea = false;
+            roundchestrecipe.Piece.m_allowedInDungeons = false;
+            roundchestrecipe.Piece.m_spaceRequirement = 0;
+            roundchestrecipe.Piece.m_placeEffect = effectList;
+
+            var tearnwear = roundbarrel.AddComponent<WearNTear>();
+            tearnwear.m_health = 1000f;
+
+            PieceManager.Instance.AddPiece(roundchestrecipe);
+            #endregion
+
+            #region Crates
+            crate.AddComponent<Piece>();
+            var cratenet = crate.AddComponent<ZNetView>();
+            var cratesync = crate.AddComponent<ZSyncTransform>();
+            cratesync.m_syncPosition = true;
+            cratesync.m_syncScale = true;
+            cratesync.m_syncRotation = true;
+
+            cratenet.m_syncInitialScale = true;
+            cratenet.m_type = ZDO.ObjectType.Solid;
+            cratenet.m_persistent = true;
+
+            cratechest = crate.AddComponent<Container>();
+            crate.transform.position = new Vector3(0f, 0f, 0f);
+            crate.transform.localPosition = new Vector3(0f, 0f, 0f);
+            cratechest.m_width = (int)cratewidth.Value;
+            cratechest.m_height = (int)crateheight.Value;
+            cratechest.m_name = "Crates";
+            cratechest.m_checkGuardStone = true;
+
+            var craterecipe = new CustomPiece(crate,
+                new PieceConfig
+                {
+
+                    PieceTable = "_HammerPieceTable",
+                    AllowedInDungeons = false,
+                    Requirements = new[]
+                    {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                    }
+                });
+            craterecipe.Piece.m_name = "Crates";
+            craterecipe.Piece.m_description = "Crates for holding things";
+            craterecipe.Piece.m_canBeRemoved = true;
+            craterecipe.Piece.m_icon = boxsprite;
+            craterecipe.Piece.m_primaryTarget = false;
+            craterecipe.Piece.m_randomTarget = false;
+            craterecipe.Piece.m_category = Piece.PieceCategory.Building;
+            craterecipe.Piece.m_enabled = true;
+            craterecipe.Piece.m_clipEverything = true;
+            craterecipe.Piece.m_isUpgrade = false;
+            craterecipe.Piece.m_comfort = 0;
+            craterecipe.Piece.m_groundPiece = false;
+            craterecipe.Piece.m_allowAltGroundPlacement = false;
+            craterecipe.Piece.m_cultivatedGroundOnly = false;
+            craterecipe.Piece.m_waterPiece = false;
+            craterecipe.Piece.m_noInWater = false;
+            craterecipe.Piece.m_notOnWood = false;
+            craterecipe.Piece.m_notOnTiltingSurface = false;
+            craterecipe.Piece.m_noClipping = false;
+            craterecipe.Piece.m_onlyInTeleportArea = false;
+            craterecipe.Piece.m_allowedInDungeons = false;
+            craterecipe.Piece.m_spaceRequirement = 0;
+            craterecipe.Piece.m_placeEffect = effectList;
+
+            var tear = crate.AddComponent<WearNTear>();
+            tear.m_health = 1000f;
+            PieceManager.Instance.AddPiece(craterecipe);
+            #endregion
 
         }
 
@@ -526,7 +900,10 @@ namespace MaorBuilds
                 var view = Barrel.AddComponent<ZNetView>();
                 view.m_persistent = true;
                 
-                Barrel.transform.localScale = new Vector3(2f, 2f, 2f);
+                Barrel.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                Barrel.transform.position = new Vector3(0f, 2f, 0f);
+                Barrel.transform.localPosition = new Vector3(0f, 2f, 0f);
+                
                 var ctn = Barrel.AddComponent<Container>();
                 ctn.m_width = BarrelWidth.Value;
                 ctn.m_height = BarrelHeight.Value;
@@ -545,10 +922,8 @@ namespace MaorBuilds
                              new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
                         }
                     });
-
-                Jotunn.Logger.LogInfo("resetting vectors");
-                Barrel.transform.localPosition = new Vector3(0f, 0f, 0f);
-                Barrel.transform.position = new Vector3(0f, 0f, 0f);
+                var wera = Barrel.AddComponent<WearNTear>();
+                wera.m_health = 1000f;
                 BarrelBox.Piece.m_name = "Barrel";
                 BarrelBox.Piece.m_description = "A Barrel for holding things";
                 BarrelBox.Piece.m_canBeRemoved = true;
@@ -573,6 +948,8 @@ namespace MaorBuilds
                 BarrelBox.Piece.m_spaceRequirement = 0;
                 BarrelBox.Piece.m_placeEffect = effectList;
                 #endregion
+                
+
                 #region GoblinSmacker
                 var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_Attack");
                 var smacker = new CustomItem(goblinsmacker, true,
@@ -626,6 +1003,7 @@ namespace MaorBuilds
                 #endregion
 
 
+                LoadAssets();
 
             }
             catch (Exception ex)
