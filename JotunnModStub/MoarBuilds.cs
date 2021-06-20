@@ -7,6 +7,9 @@ using Jotunn.Entities;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using HarmonyLib;
 
 namespace MaorBuilds
 {
@@ -17,7 +20,7 @@ namespace MaorBuilds
     {
         public const string PluginGUID = "com.zarboz.moarbuilds";
         public const string PluginName = "MoArBuIlDs";
-        public const string PluginVersion = "1.0.6";
+        public const string PluginVersion = "1.0.8";
         private Sprite goblinfence;
         private Sprite goblinspike;
         private Sprite goblinribwall2m;
@@ -44,8 +47,8 @@ namespace MaorBuilds
         private ConfigEntry<int> basketwidth;
         private ConfigEntry<int> altbarrelheight;
         private ConfigEntry<int> altbarrelwidth;
-        private ConfigEntry<int> crateheight;
-        private ConfigEntry<int> cratewidth;
+        private ConfigEntry<string> CrateCraftingMat;
+        private ConfigEntry<string> CrateCraftingMat2;
         private ConfigEntry<int> BarrelHeight;
         private EffectList effectList;
         private AssetBundle clutterassets;
@@ -54,6 +57,7 @@ namespace MaorBuilds
         private Container basketchest;
         private Container ctn;
         private Container barrell3chest;
+        private object _getMatchingZdosBreakCount;
 
         private void Awake()
         {
@@ -72,18 +76,56 @@ namespace MaorBuilds
                     Jotunn.Logger.LogMessage("Config sync event received");
                 }
             };
+            Harmony.CreateAndPatchAll(typeof(MoarBuilds).Assembly);
         }
 
+
+        
+        private bool GetAllZdosMatchingPrefabHashcodes(
+        ZDOMan zdoMan, HashSet<int> prefabHashcodes, List<ZDO> matchingZdos, ref int index)
+        {
+            if (index >= zdoMan.m_objectsBySector.Length)
+            {
+                foreach (var outsideZdos in zdoMan.m_objectsByOutsideSector.Values)
+                {
+                    matchingZdos.AddRange(outsideZdos.Where(zdo => zdo.IsValid() && prefabHashcodes.Contains(zdo.GetPrefab())));
+                }
+
+                return true;
+            }
+
+            int counted = 0;
+
+            while (index < zdoMan.m_objectsBySector.Length)
+            {
+                var sectorZdos = zdoMan.m_objectsBySector[index];
+
+                if (sectorZdos != null)
+                {
+                    var zdos = sectorZdos.Where(zdo => prefabHashcodes.Contains(zdo.GetPrefab()));
+                    matchingZdos.AddRange(zdos);
+                    counted += zdos.Count();
+                }
+
+                index++;
+
+                if (counted > 500)
+                {
+                    break;
+                }
+            }
+
+            return false;
+        }
         private void configsyncheard()
         {
-            ctn.m_width = (int)chestwidth.Value;
-            ctn.m_height = (int)chestheight.Value;
-            basketchest.m_width = (int)basketwidth.Value;
-            basketchest.m_height = (int)basketheight.Value;
-            barrell3chest.m_width = (int)altbarrelwidth.Value;
-            barrell3chest.m_height = (int)altbarrelheight.Value;
-            cratechest.m_width = (int)cratewidth.Value;
-            cratechest.m_height = (int)crateheight.Value;
+            ctn.m_width = chestwidth.Value;
+            ctn.m_height = chestheight.Value;
+            basketchest.m_width = basketwidth.Value;
+            basketchest.m_height = basketheight.Value;
+            barrell3chest.m_width = altbarrelwidth.Value;
+            barrell3chest.m_height = altbarrelheight.Value;
+
 
         }
 
@@ -102,10 +144,11 @@ namespace MaorBuilds
             
             altbarrelheight = Config.Bind("AltBarrel Size", "AltBarrel Container Height", 4, new ConfigDescription("Container Height for AltBarrel", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             altbarrelwidth = Config.Bind("AltBarrel Size", "AltBarrel Width", 4, new ConfigDescription("Container Width for AltBarrel", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            crateheight = Config.Bind("Crate Size", "Crate Container Height", 4, new ConfigDescription("Crate Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            cratewidth = Config.Bind("Crate Size", "Crate Container Width", 4, new ConfigDescription("Crate Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
+           
+            CrateCraftingMat = Config.Bind("Crate Crafting Mat", "Crate Material 1", "Iron", new ConfigDescription("Crate Material #1", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            CrateCraftingMat2 = Config.Bind("Crate Crafting Mat", "Crate Material 2", "Wood", new ConfigDescription("Crate Material #2", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+
             }
         private void SpriteThings()
         {
@@ -155,7 +198,7 @@ namespace MaorBuilds
             ctn.m_height = (int)chestheight.Value;
             ctn.m_name = "Trader Chest";
             ctn.m_checkGuardStone = true;
-
+            ctn.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
             var chestbox = new CustomPiece(chest1,
                 new PieceConfig
                 {
@@ -217,7 +260,7 @@ namespace MaorBuilds
             basketchest.m_height = (int)basketheight.Value;
             basketchest.m_name = "Traders Basket";
             basketchest.m_checkGuardStone = true;
-
+            basketchest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
             var BasketRecipe = new CustomPiece(basket,
                 new PieceConfig
                 {
@@ -275,7 +318,7 @@ namespace MaorBuilds
             barrell3chest.m_height = (int)altbarrelheight.Value;
             barrell3chest.m_name = "Trader round barrel";
             barrell3chest.m_checkGuardStone = true;
-
+            barrell3chest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
             var barrelrecip3 = new CustomPiece(barrell3,
                 new PieceConfig
                 {
@@ -336,6 +379,7 @@ namespace MaorBuilds
             roundchest.m_height = (int)BarrelHeight.Value;
             roundchest.m_name = "Trader round2 barrel";
             roundchest.m_checkGuardStone = true;
+            roundchest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
 
             var roundchestrecipe = new CustomPiece(roundbarrel,
                 new PieceConfig
@@ -390,12 +434,13 @@ namespace MaorBuilds
             cratenet.m_syncInitialScale = true;
             cratenet.m_type = ZDO.ObjectType.Solid;
             cratenet.m_persistent = true;
-
+             
             cratechest = crate.AddComponent<Container>();
             crate.transform.position = new Vector3(0f, 0f, 0f);
             crate.transform.localPosition = new Vector3(0f, 0f, 0f);
-            cratechest.m_width = (int)cratewidth.Value;
-            cratechest.m_height = (int)crateheight.Value;
+            cratechest.m_width = 8;
+            cratechest.m_height = 4;
+            cratechest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
             cratechest.m_name = "Crates";
             cratechest.m_checkGuardStone = true;
 
@@ -407,8 +452,8 @@ namespace MaorBuilds
                     AllowedInDungeons = false,
                     Requirements = new[]
                     {
-                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
-                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                             new RequirementConfig { Item = CrateCraftingMat.Value, Amount = 5, Recover = true},
+                             new RequirementConfig { Item = CrateCraftingMat2.Value, Amount = 10, Recover = true}
                     }
                 });
             craterecipe.Piece.m_name = "Crates";
@@ -948,6 +993,36 @@ namespace MaorBuilds
                 BarrelBox.Piece.m_spaceRequirement = 0;
                 BarrelBox.Piece.m_placeEffect = effectList;
                 #endregion
+                #region Portal
+                var Portal = PrefabManager.Instance.CreateClonedPrefab("Stone_Portal", "portal");
+
+                var self = Portal.GetComponent<TeleportWorld>();
+                if (!self.m_proximityRoot)
+                {
+                    self.m_proximityRoot = self.transform;
+                }
+
+                if (self.m_target_found == null)
+                {
+                    GameObject targetFoundObject = self.gameObject.transform.Find("_target_found").gameObject;
+
+                    targetFoundObject.SetActive(false);
+                    self.m_target_found = targetFoundObject.AddComponent<EffectFade>();
+                    targetFoundObject.SetActive(true);
+                }
+                var Portaljohn = new CustomPiece(Portal,
+                    new PieceConfig
+                    {
+                        PieceTable = "_HammerPieceTable",
+                        AllowedInDungeons = false,
+                        Requirements = new[]
+                        {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                        }
+                    });
+
+                #endregion
                 
 
                 #region GoblinSmacker
@@ -1000,6 +1075,7 @@ namespace MaorBuilds
                 PieceManager.Instance.AddPiece(goblin_banner);
                 PieceManager.Instance.AddPiece(Goblin_roof);
                 PieceManager.Instance.AddPiece(BarrelBox);
+                PieceManager.Instance.AddPiece(Portaljohn);
                 #endregion
 
 
