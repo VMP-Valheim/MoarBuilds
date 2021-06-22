@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using System.Collections;
 
 namespace MaorBuilds
 {
@@ -58,30 +59,99 @@ namespace MaorBuilds
         private Container ctn;
         private Container barrell3chest;
         private object _getMatchingZdosBreakCount;
+        private static long _logIntervalSeconds;
+        private static GameObject Portal;
+        private static Game self;
+        private ConfigEntry<float> _connectPortalCoroutineWait;
+        private ConfigEntry<string> _portalPrefabName;
+        private ConfigEntry<string> _onewayPortalTagPrefix;
 
         private void Awake()
         {
             ConfigThing();
             SpriteThings();
             ItemManager.OnVanillaItemsAvailable += GrabPieces;
-              SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
-            {
-                if (attr.InitialSynchronization)
-                {
-                    Jotunn.Logger.LogMessage("Initial Config sync event received");
-                    configsyncheard();
-                }
-                else
-                {
-                    Jotunn.Logger.LogMessage("Config sync event received");
-                }
-            };
+            SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
+          {
+              if (attr.InitialSynchronization)
+              {
+                  Jotunn.Logger.LogMessage("Initial Config sync event received");
+                  configsyncheard();
+              }
+              else
+              {
+                  Jotunn.Logger.LogMessage("Config sync event received");
+              }
+          };
             Harmony.CreateAndPatchAll(typeof(MoarBuilds).Assembly);
+            Jotunn.Logger.ShowDate = true;
+
+            _connectPortalCoroutineWait = Config.Bind<float>(
+                "Portals", "connectPortalCoroutineWait", 5f, "Wait time (seconds) when ConnectPortal coroutine yields.");
+
+            _portalPrefabName = Config.Bind<string>(
+                "Portals", "portalPrefabName", "Stone_Portal", "Alternative portal prefab name to search for.");
+
+            _onewayPortalTagPrefix = Config.Bind<string>(
+                "Portals", "onewayPortalTagPrefix", ">>>", "Prefix for specifying a one-way portal.");
+
+            _getMatchingZdosBreakCount = Config.Bind<int>(
+                "Portals", "getMatchingZdosBreakCount", 400, "Max ZDOs to match before breaking/pausing in method.");
+
+            On.Game.ConnectPortals += GameConnectPortalsPrefix;
+            /*
+             *     private void Awake() {
+      _isModEnabled = Config.Bind<bool>("Global", "isModEnabled", true, "Globally enable or disable this mod.");
+
+      ItemManager.OnVanillaItemsAvailable += AddStonePortalPiece;
+      On.TeleportWorld.Awake += TeleportWorldAwakePrefix;
+    }
+
+    private void AddStonePortalPiece() {
+      if (_isModEnabled.Value
+          && PieceManager.Instance.GetPiece("portal") == null
+          && PieceManager.Instance.AddPiece(new CustomPiece("portal", "portal", "Hammer"))) {
+        Jotunn.Logger.LogInfo("Added 'StonePortal' as a CustomPiece under Hammer.");
+      }
+    }
+
+    private void TeleportWorldAwakePrefix(On.TeleportWorld.orig_Awake orig, TeleportWorld self) {
+      if (!_isModEnabled.Value) {
+        orig(self);
+        return;
+      }
+
+      self.m_nview = self.GetComponent<ZNetView>();
+
+      if (self.m_nview.GetZDO() == null) {
+        self.enabled = false;
+        return;
+      }
+
+      self.m_hadTarget = self.HaveTarget();
+
+      if (!self.m_proximityRoot) {
+        self.m_proximityRoot = self.transform;
+      }
+
+      if (self.m_target_found == null) {
+        GameObject targetFoundObject = self.gameObject.transform.Find("_target_found").gameObject;
+
+        targetFoundObject.SetActive(false);
+        self.m_target_found = targetFoundObject.AddComponent<EffectFade>();
+        targetFoundObject.SetActive(true);
+      }
+
+      self.m_nview.Register<string>("SetTag", new Action<long, string>(self.RPC_SetTag));
+      self.InvokeRepeating("UpdatePortal", 0.5f, 0.5f);
+    }
+  }
+             */
         }
 
 
-        
-        private bool GetAllZdosMatchingPrefabHashcodes(
+
+        private static bool GetAllZdosMatchingPrefabHashcodes(
         ZDOMan zdoMan, HashSet<int> prefabHashcodes, List<ZDO> matchingZdos, ref int index)
         {
             if (index >= zdoMan.m_objectsBySector.Length)
@@ -131,25 +201,25 @@ namespace MaorBuilds
 
         private void ConfigThing()
         {
-            GoblinStick =  Config.Bind("GoblinStick", "Turn Goblin Brute Weapon off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
+            GoblinStick = Config.Bind("GoblinStick", "Turn Goblin Brute Weapon off and on", false, new ConfigDescription("Turn the goblin stick on or off", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
             BarrelHeight = Config.Bind("Barrel Size", "Barrel Container Height", 4, new ConfigDescription("Container Height for barrell", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             BarrelWidth = Config.Bind("Barrel Size", "Barrel Container Width", 4, new ConfigDescription("Container Width for barrell", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
+
             chestheight = Config.Bind("Chest Size", "Chest Container Height", 4, new ConfigDescription("Container Height for Chest", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             chestwidth = Config.Bind("Chest Size", "Chest Container Width", 4, new ConfigDescription("Container Width for Chest", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
+
             basketheight = Config.Bind("Basket Size", "Basket Container Height", 4, new ConfigDescription("Container Height for Basket", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             basketwidth = Config.Bind("Basket Size", "Basket Container Width", 4, new ConfigDescription("Container Width for Basket", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
+
             altbarrelheight = Config.Bind("AltBarrel Size", "AltBarrel Container Height", 4, new ConfigDescription("Container Height for AltBarrel", new AcceptableValueRange<int>(0, 10), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             altbarrelwidth = Config.Bind("AltBarrel Size", "AltBarrel Width", 4, new ConfigDescription("Container Width for AltBarrel", new AcceptableValueRange<int>(0, 8), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-           
+
             CrateCraftingMat = Config.Bind("Crate Crafting Mat", "Crate Material 1", "Iron", new ConfigDescription("Crate Material #1", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             CrateCraftingMat2 = Config.Bind("Crate Crafting Mat", "Crate Material 2", "Wood", new ConfigDescription("Crate Material #2", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
 
-            }
+        }
         private void SpriteThings()
         {
 
@@ -172,13 +242,13 @@ namespace MaorBuilds
             boxsprite = spritebundle1.LoadAsset<Sprite>("boxes");
             chestsprite = spritebundle1.LoadAsset<Sprite>("chest");
         }
-          
+
         private void LoadAssets()
         {
             clutterassets = AssetUtils.LoadAssetBundleFromResources("containerclutter", typeof(MoarBuilds).Assembly);
             var chest1 = clutterassets.LoadAsset<GameObject>("TraderChest_static");
             var basket = clutterassets.LoadAsset<GameObject>("fi_vil_container_basket02_closed");
-            var barrell3 = clutterassets.LoadAsset<GameObject>("fi_vil_container_barrel_small"); 
+            var barrell3 = clutterassets.LoadAsset<GameObject>("fi_vil_container_barrel_small");
             var roundbarrel = clutterassets.LoadAsset<GameObject>("default");
             var crate = clutterassets.LoadAsset<GameObject>("fi_vil_container_crate_big_x4_01");
 
@@ -247,7 +317,7 @@ namespace MaorBuilds
             var znetview = basket.AddComponent<ZNetView>();
             znetview.m_persistent = true;
             znetview.m_type = ZDO.ObjectType.Solid;
-            
+
             var transform4 = basket.AddComponent<ZSyncTransform>();
             transform4.m_syncRotation = true;
             transform4.m_syncScale = true;
@@ -302,7 +372,7 @@ namespace MaorBuilds
             #region Barrel3
             barrell3.AddComponent<Piece>();
             var testviiew = barrell3.AddComponent<ZNetView>();
-            Vector3 scale =new Vector3(1.5f, 1.5f, 1.5f);
+            Vector3 scale = new Vector3(1.5f, 1.5f, 1.5f);
             testviiew.SetLocalScale(scale);
             testviiew.m_persistent = true;
             var transform5 = barrell3.AddComponent<ZSyncTransform>();
@@ -434,7 +504,7 @@ namespace MaorBuilds
             cratenet.m_syncInitialScale = true;
             cratenet.m_type = ZDO.ObjectType.Solid;
             cratenet.m_persistent = true;
-             
+
             cratechest = crate.AddComponent<Container>();
             crate.transform.position = new Vector3(0f, 0f, 0f);
             crate.transform.localPosition = new Vector3(0f, 0f, 0f);
@@ -514,7 +584,7 @@ namespace MaorBuilds
                              new RequirementConfig { Item = "Wood", Amount = 15, Recover = false}
                         }
                     });
-               
+
                 Jotunn.Logger.LogInfo("resetting vectors");
                 test.transform.localPosition = new Vector3(0f, 0f, 0f);
                 test.transform.position = new Vector3(0f, 0f, 0f);
@@ -703,27 +773,27 @@ namespace MaorBuilds
                 goblinroof2.transform.localPosition = new Vector3(0f, 0f, 0f);
                 goblinroof2.transform.position = new Vector3(0f, 0f, 0f);
                 var goblinwallm2 = goblinwall_2m.Piece;
-               goblinwallm2.m_name = "Goblin Wall 2m";
-               goblinwallm2.m_description = "A 2m long section of wall recovered from the last village you raided";
-               goblinwallm2.m_canBeRemoved = true;
-               goblinwallm2.m_icon = woodwall2m;
-               goblinwallm2.m_primaryTarget = false;
-               goblinwallm2.m_randomTarget = true;
-               goblinwallm2.m_category = Piece.PieceCategory.Building;
-               goblinwallm2.m_enabled = true;
-               goblinwallm2.m_isUpgrade = false;
-               goblinwallm2.m_comfort = 0;
-               goblinwallm2.m_groundPiece = false;
-               goblinwallm2.m_allowAltGroundPlacement = false;
-               goblinwallm2.m_cultivatedGroundOnly = false;
-               goblinwallm2.m_waterPiece = false;
-               goblinwallm2.m_noInWater = false;
-               goblinwallm2.m_notOnWood = false;
-               goblinwallm2.m_notOnTiltingSurface = false;
-               goblinwallm2.m_noClipping = false;
-               goblinwallm2.m_onlyInTeleportArea = false;
-               goblinwallm2.m_allowedInDungeons = false;
-               goblinwallm2.m_spaceRequirement = 2;
+                goblinwallm2.m_name = "Goblin Wall 2m";
+                goblinwallm2.m_description = "A 2m long section of wall recovered from the last village you raided";
+                goblinwallm2.m_canBeRemoved = true;
+                goblinwallm2.m_icon = woodwall2m;
+                goblinwallm2.m_primaryTarget = false;
+                goblinwallm2.m_randomTarget = true;
+                goblinwallm2.m_category = Piece.PieceCategory.Building;
+                goblinwallm2.m_enabled = true;
+                goblinwallm2.m_isUpgrade = false;
+                goblinwallm2.m_comfort = 0;
+                goblinwallm2.m_groundPiece = false;
+                goblinwallm2.m_allowAltGroundPlacement = false;
+                goblinwallm2.m_cultivatedGroundOnly = false;
+                goblinwallm2.m_waterPiece = false;
+                goblinwallm2.m_noInWater = false;
+                goblinwallm2.m_notOnWood = false;
+                goblinwallm2.m_notOnTiltingSurface = false;
+                goblinwallm2.m_noClipping = false;
+                goblinwallm2.m_onlyInTeleportArea = false;
+                goblinwallm2.m_allowedInDungeons = false;
+                goblinwallm2.m_spaceRequirement = 2;
                 goblinwallm2.m_placeEffect = effectList;
                 #endregion
                 #region GoblinRoofwall1m
@@ -893,7 +963,7 @@ namespace MaorBuilds
                 DungeonGate.m_allowedInDungeons = false;
                 DungeonGate.m_spaceRequirement = 0;
                 DungeonGate.m_placeEffect = effectList;
-                 
+
                 #endregion
                 #region Goblinroof
                 var Goblinroof = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
@@ -944,17 +1014,17 @@ namespace MaorBuilds
                 Barrel.AddComponent<ZSyncTransform>();
                 var view = Barrel.AddComponent<ZNetView>();
                 view.m_persistent = true;
-                
+
                 Barrel.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
                 Barrel.transform.position = new Vector3(0f, 2f, 0f);
                 Barrel.transform.localPosition = new Vector3(0f, 2f, 0f);
-                
+
                 var ctn = Barrel.AddComponent<Container>();
                 ctn.m_width = BarrelWidth.Value;
                 ctn.m_height = BarrelHeight.Value;
                 ctn.m_name = "Barrell";
                 ctn.m_checkGuardStone = true;
-                
+
                 DestroyImmediate(Barrel.GetComponent<DropOnDestroyed>());
                 var BarrelBox = new CustomPiece(Barrel,
                     new PieceConfig
@@ -994,7 +1064,7 @@ namespace MaorBuilds
                 BarrelBox.Piece.m_placeEffect = effectList;
                 #endregion
                 #region Portal
-                var Portal = PrefabManager.Instance.CreateClonedPrefab("Stone_Portal", "portal");
+                Portal = PrefabManager.Instance.CreateClonedPrefab("Stone_Portal", "portal");
 
                 var self = Portal.GetComponent<TeleportWorld>();
                 if (!self.m_proximityRoot)
@@ -1021,9 +1091,9 @@ namespace MaorBuilds
                              new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
                         }
                     });
-
-                #endregion
                 
+                #endregion
+
 
                 #region GoblinSmacker
                 var goblinsmacker = PrefabManager.Instance.CreateClonedPrefab("GoblinBrute_RageAttack1", "GoblinBrute_Attack");
@@ -1039,7 +1109,7 @@ namespace MaorBuilds
                             new RequirementConfig{Item = "LeatherScraps", Amount = 10, AmountPerLevel = 10}
                         }
                     });
-                var itemDrop =smacker.ItemDrop;
+                var itemDrop = smacker.ItemDrop;
                 itemDrop.m_itemData.m_shared.m_icons = new Sprite[]
                     { goblinsmacker1 };
                 itemDrop.m_itemData.m_shared.m_name = "Goblin Smacker";
@@ -1091,10 +1161,106 @@ namespace MaorBuilds
                 ItemManager.OnVanillaItemsAvailable -= GrabPieces;
             }
 
-         
+
 
         }
 
+
+
+        private IEnumerator GameConnectPortalsPrefix(On.Game.orig_ConnectPortals orig, Game self)
+        {
+            ZDOMan zdoMan = ZDOMan.instance;
+
+            long logTimestamp;
+            long lastLogTimestamp = 0;
+
+            while (true)
+            {
+                logTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+                bool shouldLog = (logTimestamp - lastLogTimestamp) > _logIntervalSeconds;
+
+                self.m_tempPortalList.Clear();
+
+                int index = 0;
+                bool getPrefabsComplete;
+
+                HashSet<int> prefabHashcodes = new HashSet<int> {
+          self.m_portalPrefab.name.GetStableHashCode(),
+          _portalPrefabName.Value.GetStableHashCode()
+        };
+
+                do
+                {
+                    getPrefabsComplete =
+                        GetAllZdosMatchingPrefabHashcodes(zdoMan, prefabHashcodes, self.m_tempPortalList, ref index);
+
+                    yield return null;
+                } while (!getPrefabsComplete);
+
+                if (shouldLog)
+                {
+                    Jotunn.Logger.LogInfo("Found " + self.m_tempPortalList.Count + " portal prefabs.");
+                }
+
+                foreach (ZDO zdo in self.m_tempPortalList)
+                {
+                    ZDOID targetZdoid = zdo.GetZDOID("target");
+
+                    if (targetZdoid.IsNone())
+                    {
+                        continue;
+                    }
+
+                    string @tag = zdo.GetString("tag", string.Empty);
+                    ZDO targetZdo = zdoMan.GetZDO(targetZdoid);
+
+                    if (tag == string.Empty
+                        || targetZdo == null
+                        || (targetZdo.GetString("tag", string.Empty) != tag && !tag.StartsWith(_onewayPortalTagPrefix.Value)))
+                    {
+                        zdo.SetOwner(zdoMan.GetMyID());
+                        zdo.Set("target", ZDOID.None);
+                        zdoMan.ForceSendZDO(zdo.m_uid);
+                    }
+                }
+
+                foreach (ZDO zdo in self.m_tempPortalList)
+                {
+                    string @tag = zdo.GetString("tag", string.Empty);
+
+                    if (tag == string.Empty || !zdo.GetZDOID("target").IsNone())
+                    {
+                        continue;
+                    }
+
+                    // If tag starts with oneway-prefix, look for matching portal that has tag without the prefix. 
+                    bool isOneWayPortal = tag.StartsWith(_onewayPortalTagPrefix.Value);
+                    ZDO targetZdo = self.FindRandomUnconnectedPortal(
+                        self.m_tempPortalList, zdo, isOneWayPortal ? tag.Remove(0, _onewayPortalTagPrefix.Value.Length) : tag);
+
+                    if (targetZdo != null)
+                    {
+                        zdo.SetOwner(zdoMan.GetMyID());
+                        zdo.Set("target", targetZdo.m_uid);
+
+                        // Only connect target if we are not a one-way portal.
+                        targetZdo.SetOwner(zdoMan.GetMyID());
+                        targetZdo.Set("target", isOneWayPortal ? ZDOID.None : zdo.m_uid);
+
+                        zdoMan.ForceSendZDO(zdo.m_uid);
+                        zdoMan.ForceSendZDO(targetZdo.m_uid);
+                    }
+                }
+
+                if (shouldLog)
+                {
+                    Jotunn.Logger.LogInfo("ZDOMan.instance.m_objectsById.Count: " + zdoMan.m_objectsByID.Count);
+                    lastLogTimestamp = logTimestamp;
+                }
+
+                yield return new WaitForSeconds(_connectPortalCoroutineWait.Value);
+            }
+        }
 
     }
 }
