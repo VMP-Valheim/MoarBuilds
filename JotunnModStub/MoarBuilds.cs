@@ -609,7 +609,6 @@ namespace MaorBuilds
                 piece.m_noClipping = false;
                 piece.m_onlyInTeleportArea = false;
                 piece.m_allowedInDungeons = false;
-                piece.m_center = new Vector3(0f, 0f, 0f);
                 piece.m_haveCenter = true;
                 piece.m_spaceRequirement = 2;
                 piece.m_placeEffect = effectList2;
