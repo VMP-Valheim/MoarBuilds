@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using System.Collections;
+using System.Reflection.Emit;
 
 namespace MaorBuilds
 {
@@ -59,12 +60,12 @@ namespace MaorBuilds
         private Container ctn;
         private Container barrell3chest;
         private object _getMatchingZdosBreakCount;
-        private static long _logIntervalSeconds;
+        private ConfigEntry<bool> _isModEnabled;
         private static GameObject Portal;
-        private static Game self;
         private ConfigEntry<float> _connectPortalCoroutineWait;
         private ConfigEntry<string> _portalPrefabName;
         private ConfigEntry<string> _onewayPortalTagPrefix;
+        private long _logIntervalSeconds;
 
         private void Awake()
         {
@@ -83,75 +84,51 @@ namespace MaorBuilds
                   Jotunn.Logger.LogMessage("Config sync event received");
               }
           };
-            Harmony.CreateAndPatchAll(typeof(MoarBuilds).Assembly);
             Jotunn.Logger.ShowDate = true;
 
-            _connectPortalCoroutineWait = Config.Bind<float>(
-                "Portals", "connectPortalCoroutineWait", 5f, "Wait time (seconds) when ConnectPortal coroutine yields.");
 
-            _portalPrefabName = Config.Bind<string>(
-                "Portals", "portalPrefabName", "Stone_Portal", "Alternative portal prefab name to search for.");
-
-            _onewayPortalTagPrefix = Config.Bind<string>(
-                "Portals", "onewayPortalTagPrefix", ">>>", "Prefix for specifying a one-way portal.");
-
-            _getMatchingZdosBreakCount = Config.Bind<int>(
-                "Portals", "getMatchingZdosBreakCount", 400, "Max ZDOs to match before breaking/pausing in method.");
-
+            Harmony.CreateAndPatchAll(typeof(MoarBuilds).Assembly);
+            On.TeleportWorld.Awake += TeleportWorldAwakePrefix;
             On.Game.ConnectPortals += GameConnectPortalsPrefix;
-            /*
-             *     private void Awake() {
-      _isModEnabled = Config.Bind<bool>("Global", "isModEnabled", true, "Globally enable or disable this mod.");
-
-      ItemManager.OnVanillaItemsAvailable += AddStonePortalPiece;
-      On.TeleportWorld.Awake += TeleportWorldAwakePrefix;
-    }
-
-    private void AddStonePortalPiece() {
-      if (_isModEnabled.Value
-          && PieceManager.Instance.GetPiece("portal") == null
-          && PieceManager.Instance.AddPiece(new CustomPiece("portal", "portal", "Hammer"))) {
-        Jotunn.Logger.LogInfo("Added 'StonePortal' as a CustomPiece under Hammer.");
-      }
-    }
-
-    private void TeleportWorldAwakePrefix(On.TeleportWorld.orig_Awake orig, TeleportWorld self) {
-      if (!_isModEnabled.Value) {
-        orig(self);
-        return;
-      }
-
-      self.m_nview = self.GetComponent<ZNetView>();
-
-      if (self.m_nview.GetZDO() == null) {
-        self.enabled = false;
-        return;
-      }
-
-      self.m_hadTarget = self.HaveTarget();
-
-      if (!self.m_proximityRoot) {
-        self.m_proximityRoot = self.transform;
-      }
-
-      if (self.m_target_found == null) {
-        GameObject targetFoundObject = self.gameObject.transform.Find("_target_found").gameObject;
-
-        targetFoundObject.SetActive(false);
-        self.m_target_found = targetFoundObject.AddComponent<EffectFade>();
-        targetFoundObject.SetActive(true);
-      }
-
-      self.m_nview.Register<string>("SetTag", new Action<long, string>(self.RPC_SetTag));
-      self.InvokeRepeating("UpdatePortal", 0.5f, 0.5f);
-    }
-  }
-             */
         }
+    private void TeleportWorldAwakePrefix(On.TeleportWorld.orig_Awake orig, TeleportWorld self)
+        {
+            if (!_isModEnabled.Value)
+            {
+                orig(self);
+                return;
+            }
 
+            self.m_nview = self.GetComponent<ZNetView>();
 
+            if (self.m_nview.GetZDO() == null)
+            {
+                self.enabled = false;
+                return;
+            }
 
-        private static bool GetAllZdosMatchingPrefabHashcodes(
+            self.m_hadTarget = self.HaveTarget();
+
+            if (!self.m_proximityRoot)
+            {
+                self.m_proximityRoot = self.transform;
+            }
+
+            if (self.m_target_found == null)
+            {
+                GameObject targetFoundObject = self.gameObject.transform.Find("_target_found").gameObject;
+
+                targetFoundObject.SetActive(false);
+                self.m_target_found = targetFoundObject.AddComponent<EffectFade>();
+                targetFoundObject.SetActive(true);
+            }
+
+            self.m_nview.Register<string>("SetTag", new Action<long, string>(self.RPC_SetTag));
+            self.InvokeRepeating("UpdatePortal", 0.5f, 0.5f);
+        }
+    
+
+    private static bool GetAllZdosMatchingPrefabHashcodes(
         ZDOMan zdoMan, HashSet<int> prefabHashcodes, List<ZDO> matchingZdos, ref int index)
         {
             if (index >= zdoMan.m_objectsBySector.Length)
@@ -217,7 +194,16 @@ namespace MaorBuilds
 
             CrateCraftingMat = Config.Bind("Crate Crafting Mat", "Crate Material 1", "Iron", new ConfigDescription("Crate Material #1", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             CrateCraftingMat2 = Config.Bind("Crate Crafting Mat", "Crate Material 2", "Wood", new ConfigDescription("Crate Material #2", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            _connectPortalCoroutineWait = Config.Bind("Portals", "connectPortalCoroutineWait", 4f, new ConfigDescription("Wait time (seconds) when ConnectPortal coroutine yields.", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+           
+            _portalPrefabName = Config.Bind("Portals", "portalPrefabName", "Stone_Portal", new ConfigDescription("Alternative portal prefab name to search for.", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
+            _onewayPortalTagPrefix = Config.Bind("Portals", "onewayPortalTagPrefix", ">>>", new ConfigDescription("Prefix for specifying a one-way portal.", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+             _getMatchingZdosBreakCount = Config.Bind("Portals", "getMatchingZdosBreakCount", 400, new ConfigDescription("Max ZDOs to match before breaking/pausing in method.", new AcceptableValueRange<int>(0, 1600), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            _isModEnabled = Config.Bind("Portals", "This enables connection of stone portal -> normal portals", true, new ConfigDescription ("disable or enable prefab linking for portals", null, new ConfigurationManagerAttributes { IsAdminOnly = true}));
 
         }
         private void SpriteThings()
@@ -1086,8 +1072,10 @@ namespace MaorBuilds
                         AllowedInDungeons = false,
                         Requirements = new[]
                         {
-                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
-                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                             new RequirementConfig { Item = "Stone", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "SurtlingCore", Amount = 10, Recover = true },
+                             new RequirementConfig { Item = "GreydwarfEye", Amount = 20, Recover = false},
+                             new RequirementConfig { Item = "Thistle", Amount = 10, Recover = true}
                         }
                     });
                 
@@ -1196,10 +1184,9 @@ namespace MaorBuilds
                     yield return null;
                 } while (!getPrefabsComplete);
 
-                if (shouldLog)
-                {
-                    Jotunn.Logger.LogInfo("Found " + self.m_tempPortalList.Count + " portal prefabs.");
-                }
+#if DEBUG
+                Jotunn.Logger.LogInfo("Found " + self.m_tempPortalList.Count + " portal prefabs.");
+#endif
 
                 foreach (ZDO zdo in self.m_tempPortalList)
                 {
@@ -1251,15 +1238,33 @@ namespace MaorBuilds
                     }
                 }
 
-                if (shouldLog)
-                {
-                    Jotunn.Logger.LogInfo("ZDOMan.instance.m_objectsById.Count: " + zdoMan.m_objectsByID.Count);
+#if DEBUG
+                Jotunn.Logger.LogInfo("ZDOMan.instance.m_objectsById.Count: " + zdoMan.m_objectsByID.Count);
                     lastLogTimestamp = logTimestamp;
-                }
+#endif
 
                 yield return new WaitForSeconds(_connectPortalCoroutineWait.Value);
             }
         }
-
+        [HarmonyPatch(typeof(TeleportWorld), "Interact")]
+        private class Interact_Patch
+        { 
+            private static IEnumerable<CodeInstruction> Transpiler(
+              IEnumerable<CodeInstruction> instructions)
+            {
+                List<CodeInstruction> source = new List<CodeInstruction>(instructions);
+                
+                    for (int index = 0; index < source.Count; ++index)
+                    {
+                        if (source[index].opcode == OpCodes.Ldc_I4_S)
+                            source[index].operand = (object)(int)sbyte.MaxValue;
+                    }
+                
+                return source.AsEnumerable<CodeInstruction>();
+            }
+        }
     }
+
+
 }
+
