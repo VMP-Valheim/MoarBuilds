@@ -1,25 +1,25 @@
-﻿using BepInEx;
-using UnityEngine;
-using BepInEx.Configuration;
-using Jotunn.Utils;
-using System.Reflection;
-using Jotunn.Entities;
-using Jotunn.Configs;
-using Jotunn.Managers;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
-using System.Collections;
 using System.Reflection.Emit;
+using BepInEx;
+using BepInEx.Configuration;
+using HarmonyLib;
+using Jotunn.Configs;
+using Jotunn.Entities;
+using Jotunn.Managers;
+using Jotunn.Utils;
+using UnityEngine;
 
-namespace MaorBuilds
+namespace MoarBuilds
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.None)]
     internal class MoarBuilds : BaseUnityPlugin
     {
+        
         public const string PluginGUID = "com.zarboz.moarbuilds";
         public const string PluginName = "MoArBuIlDs";
         public const string PluginVersion = "1.0.8";
@@ -67,11 +67,42 @@ namespace MaorBuilds
         private ConfigEntry<string> _onewayPortalTagPrefix;
         private long _logIntervalSeconds;
 
+        public static Vector3[] GetColliderVertexPosRotated(GameObject obj)
+        {
+            BoxCollider col = obj.GetComponentInChildren<BoxCollider>();
+            var trans = obj.transform;
+            var min = col.center - col.size * 0.5f;
+            var max = col.center + col.size * 0.5f;
+            Vector3[] vertices = new Vector3[8];
+            vertices[0] = trans.TransformPoint(new Vector3(min.x, min.y, min.z));
+            vertices[1] = trans.TransformPoint(new Vector3(min.x, min.y, max.z));
+            vertices[2] = trans.TransformPoint(new Vector3(min.x, max.y, min.z));
+            vertices[3] = trans.TransformPoint(new Vector3(min.x, max.y, max.z));
+            vertices[4] = trans.TransformPoint(new Vector3(max.x, min.y, min.z));
+            vertices[5] = trans.TransformPoint(new Vector3(max.x, min.y, max.z));
+            vertices[6] = trans.TransformPoint(new Vector3(max.x, max.y, min.z));
+            vertices[7] = trans.TransformPoint(new Vector3(max.x, max.y, max.z));
+
+            return vertices;
+        }
+        public static void AttachSnapPoints(GameObject objecttosnap, Vector3[] vector3s)
+        {
+            foreach (var VARIABLE in vector3s)
+            {
+                GameObject snappoint = new GameObject();
+                snappoint.name = "_snappoint";
+                snappoint.tag = "snappoint";
+                snappoint.layer = 10;
+                var temp = Instantiate(snappoint, VARIABLE, Quaternion.identity, objecttosnap.transform);
+                temp.SetActive(false);
+            }
+        }
+
         private void Awake()
         {
             ConfigThing();
             SpriteThings();
-            ItemManager.OnVanillaItemsAvailable += GrabPieces;
+            PrefabManager.OnVanillaPrefabsAvailable += GrabPieces;
             SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
           {
               if (attr.InitialSynchronization)
@@ -228,7 +259,6 @@ namespace MaorBuilds
             boxsprite = spritebundle1.LoadAsset<Sprite>("boxes");
             chestsprite = spritebundle1.LoadAsset<Sprite>("chest");
         }
-
         private void LoadAssets()
         {
             clutterassets = AssetUtils.LoadAssetBundleFromResources("containerclutter", typeof(MoarBuilds).Assembly);
@@ -262,11 +292,10 @@ namespace MaorBuilds
                     AllowedInDungeons = false,
                     Requirements = new[]
                     {
-                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
-                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                        new RequirementConfig { Item = "Iron", Amount = 5, Recover = true },
+                        new RequirementConfig { Item = "Wood", Amount = 10, Recover = true }
                     }
                 });
-
             chestbox.Piece.m_name = "Trader Chest";
             chestbox.Piece.m_description = "Traders Chest for holding things";
             chestbox.Piece.m_canBeRemoved = true;
@@ -560,6 +589,8 @@ namespace MaorBuilds
                 var test = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m_ribs1", "goblin_woodwall_2m_ribs");
                 test.AddComponent<Piece>();
                 DestroyImmediate(test.GetComponent<DropOnDestroyed>());
+                var Vertices = GetColliderVertexPosRotated(test);
+                AttachSnapPoints(test, Vertices);
                 var CP = new CustomPiece(test,
                     new PieceConfig
                     {
@@ -601,6 +632,8 @@ namespace MaorBuilds
                 #endregion
                 #region biggerstonefloor
                 var stonefloornew = PrefabManager.Instance.CreateClonedPrefab("piece_stonefloor_2x2", "stone_floor");
+                Vertices = GetColliderVertexPosRotated(stonefloornew);
+                AttachSnapPoints(stonefloornew, Vertices);
                 var CP2 = new CustomPiece(stonefloornew,
                new PieceConfig
                {
@@ -614,6 +647,8 @@ namespace MaorBuilds
                 #endregion
                 #region GoblinFence1
                 var fence = PrefabManager.Instance.CreateClonedPrefab("goblin_fence1", "goblin_fence");
+                Vertices = GetColliderVertexPosRotated(fence);
+                AttachSnapPoints(fence, Vertices);
                 DestroyImmediate(fence.GetComponent<DropOnDestroyed>());
                 fence.AddComponent<Piece>();
 
@@ -657,6 +692,8 @@ namespace MaorBuilds
                 #endregion
                 #region GoblinRoof45
                 var goblinroof1 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d1", "goblin_roof_45d");
+                Vertices = GetColliderVertexPosRotated(goblinroof1);
+                AttachSnapPoints(goblinroof1, Vertices);
                 goblinroof1.AddComponent<Piece>();
                 DestroyImmediate(goblinroof1.GetComponent<DropOnDestroyed>());
                 var goblinroof_1 = new CustomPiece(goblinroof1,
@@ -700,6 +737,8 @@ namespace MaorBuilds
                 #region GoblinRoof45 corner
                 var goblinroof2 = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_45d_corner1", "goblin_roof_45d_corner");
                 goblinroof2.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(goblinroof2);
+                AttachSnapPoints(goblinroof2, Vertices);
                 DestroyImmediate(goblinroof2.GetComponent<DropOnDestroyed>());
                 var goblinroof_2 = new CustomPiece(goblinroof2,
                     new PieceConfig
@@ -742,6 +781,8 @@ namespace MaorBuilds
                 #region GoblinRoofwall2m
                 var goblinwall2m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_2m1", "goblin_woodwall_2m");
                 goblinwall2m.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(goblinwall2m);
+                AttachSnapPoints(goblinwall2m, Vertices);
                 DestroyImmediate(goblinwall2m.GetComponent<DropOnDestroyed>());
                 var goblinwall_2m = new CustomPiece(goblinwall2m,
                     new PieceConfig
@@ -784,6 +825,8 @@ namespace MaorBuilds
                 #region GoblinRoofwall1m
                 var goblinwall1m = PrefabManager.Instance.CreateClonedPrefab("goblin_woodwall_1m1", "goblin_woodwall_1m");
                 goblinwall1m.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(goblinwall1m);
+                AttachSnapPoints(goblinwall1m, Vertices);
                 DestroyImmediate(goblinwall1m.GetComponent<DropOnDestroyed>());
                 var goblinwall_1m = new CustomPiece(goblinwall1m,
                     new PieceConfig
@@ -826,6 +869,8 @@ namespace MaorBuilds
                 #region GoblinRoofpole
                 var goblinpole = PrefabManager.Instance.CreateClonedPrefab("goblin_pole1", "goblin_pole");
                 goblinpole.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(goblinpole);
+                AttachSnapPoints(goblinpole, Vertices);
                 DestroyImmediate(goblinpole.GetComponent<DropOnDestroyed>());
                 var goblin_pole = new CustomPiece(goblinpole,
                     new PieceConfig
@@ -868,6 +913,8 @@ namespace MaorBuilds
                 #region GoblinBanner
                 var goblinbanner = PrefabManager.Instance.CreateClonedPrefab("goblin_banner1", "goblin_banner");
                 goblinbanner.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(goblinbanner);
+                AttachSnapPoints(goblinbanner, Vertices);
                 DestroyImmediate(goblinbanner.GetComponent<DropOnDestroyed>());
                 var goblin_banner = new CustomPiece(goblinbanner,
                     new PieceConfig
@@ -910,6 +957,8 @@ namespace MaorBuilds
                 #region DungeonGate
                 var dungeongate = PrefabManager.Instance.CreateClonedPrefab("dungeon_sunkencrypt_irongate1", "dungeon_sunkencrypt_irongate");
                 dungeongate.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(dungeongate);
+                AttachSnapPoints(dungeongate, Vertices);
                 //Destroy(dungeongate.GetComponent<DropOnDestroyed>());
                 var dungeon_gate = new CustomPiece(dungeongate,
                     new PieceConfig
@@ -953,6 +1002,8 @@ namespace MaorBuilds
                 #region Goblinroof
                 var Goblinroof = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
                 Goblinroof.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(Goblinroof);
+                AttachSnapPoints(Goblinroof, Vertices);
                 DestroyImmediate(Goblinroof.GetComponent<DropOnDestroyed>());
                 var Goblin_roof = new CustomPiece(Goblinroof,
                     new PieceConfig
@@ -999,11 +1050,15 @@ namespace MaorBuilds
                 Barrel.AddComponent<ZSyncTransform>();
                 var view = Barrel.AddComponent<ZNetView>();
                 view.m_persistent = true;
-
-                Barrel.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
-                Barrel.transform.position = new Vector3(0f, 2f, 0f);
-                Barrel.transform.localPosition = new Vector3(0f, 2f, 0f);
-
+                Barrel.transform.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+                Barrel.transform.gameObject.transform.position = new Vector3(0f, 5f, 0f);
+                Barrel.transform.gameObject.transform.localPosition = new Vector3(0f, 5f, 0f);
+                var collider = Barrel.transform.gameObject.AddComponent<MeshCollider>();
+                Vertices = GetColliderVertexPosRotated(Barrel);
+                AttachSnapPoints(Barrel, Vertices);
+                collider.convex = false;
+                Jotunn.Logger.LogWarning($"Did I find it?{collider}");
+                //collider.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
                 var ctn = Barrel.AddComponent<Container>();
                 ctn.m_width = BarrelWidth.Value;
                 ctn.m_height = BarrelHeight.Value;
@@ -1016,6 +1071,7 @@ namespace MaorBuilds
                     {
                         PieceTable = "_HammerPieceTable",
                         AllowedInDungeons = false,
+                        Category =  "Furniture",
                         Requirements = new[]
                         {
                              new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
@@ -1047,10 +1103,62 @@ namespace MaorBuilds
                 BarrelBox.Piece.m_allowedInDungeons = false;
                 BarrelBox.Piece.m_spaceRequirement = 0;
                 BarrelBox.Piece.m_placeEffect = effectList;
+                #endregion 
+                #region Crateboxsingle
+                var Cratesingle = PrefabManager.Instance.CreateClonedPrefab("CastleBox", "CastleKit_braided_box01");
+                Cratesingle.AddComponent<Piece>();
+                Vertices = GetColliderVertexPosRotated(Cratesingle);
+                AttachSnapPoints(Cratesingle, Vertices);
+                
+                var view5 = Cratesingle.GetComponent<ZNetView>();
+                view5.m_persistent = true;
+                var ctn4 = Cratesingle.AddComponent<Container>();
+                ctn4.m_width = 4;
+                ctn4.m_height = 4;
+                ctn4.m_name = "Small Crate";
+                ctn4.m_checkGuardStone = true;
+
+                DestroyImmediate(Cratesingle.GetComponent<Destructible>());
+                var Cratesingle2 = new CustomPiece(Cratesingle,
+                    new PieceConfig
+                    {
+                        PieceTable = "_HammerPieceTable",
+                        AllowedInDungeons = false,
+                        Category = "Furniture",
+                        Requirements = new[]
+                        {
+                             new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
+                             new RequirementConfig { Item = "Wood", Amount = 10, Recover = true}
+                        }
+                    });
+                var wera3 = Cratesingle.AddComponent<WearNTear>();
+                wera3.m_health = 1000f;
+                Cratesingle2.Piece.m_name = "Small Crate";
+                Cratesingle2.Piece.m_description = "A Small Crate for holding things";
+                Cratesingle2.Piece.m_canBeRemoved = true;
+                Cratesingle2.Piece.m_icon = barrelsprite;
+                Cratesingle2.Piece.m_primaryTarget = false;
+                Cratesingle2.Piece.m_randomTarget = false;
+                Cratesingle2.Piece.m_category = Piece.PieceCategory.Building;
+                Cratesingle2.Piece.m_enabled = true;
+                Cratesingle2.Piece.m_clipEverything = true;
+                Cratesingle2.Piece.m_isUpgrade = false;
+                Cratesingle2.Piece.m_comfort = 0;
+                Cratesingle2.Piece.m_groundPiece = false;
+                Cratesingle2.Piece.m_allowAltGroundPlacement = false;
+                Cratesingle2.Piece.m_cultivatedGroundOnly = false;
+                Cratesingle2.Piece.m_waterPiece = false;
+                Cratesingle2.Piece.m_noInWater = false;
+                Cratesingle2.Piece.m_notOnWood = false;
+                Cratesingle2.Piece.m_notOnTiltingSurface = false;
+                Cratesingle2.Piece.m_noClipping = false;
+                Cratesingle2.Piece.m_onlyInTeleportArea = false;
+                Cratesingle2.Piece.m_allowedInDungeons = false;
+                Cratesingle2.Piece.m_spaceRequirement = 0;
+                Cratesingle2.Piece.m_placeEffect = effectList;
                 #endregion
                 #region Portal
                 Portal = PrefabManager.Instance.CreateClonedPrefab("Stone_Portal", "portal");
-
                 var self = Portal.GetComponent<TeleportWorld>();
                 if (!self.m_proximityRoot)
                 {
@@ -1133,6 +1241,7 @@ namespace MaorBuilds
                 PieceManager.Instance.AddPiece(Goblin_roof);
                 PieceManager.Instance.AddPiece(BarrelBox);
                 PieceManager.Instance.AddPiece(Portaljohn);
+                //PieceManager.Instance.AddPiece(Cratesingle2);
                 #endregion
 
 
@@ -1141,7 +1250,7 @@ namespace MaorBuilds
             }
             catch (Exception ex)
             {
-                Jotunn.Logger.LogError($"Error while adding cloned item: {ex.Message}");
+                Jotunn.Logger.LogError($"Error while adding cloned item: {ex}");
             }
             finally
             {
@@ -1265,6 +1374,6 @@ namespace MaorBuilds
         }
     }
 
-
+    
 }
 
