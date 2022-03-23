@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -255,7 +253,7 @@ namespace MoarBuilds
             ctn.m_name = "Trader Chest";
             ctn.m_checkGuardStone = true;
             ctn.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
-            var chestbox = new CustomPiece(chest1,
+            var chestbox = new CustomPiece(chest1,false,
                 new PieceConfig
                 {
                     PieceTable = "_HammerPieceTable",
@@ -316,7 +314,7 @@ namespace MoarBuilds
             basketchest.m_name = "Traders Basket";
             basketchest.m_checkGuardStone = true;
             basketchest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
-            var BasketRecipe = new CustomPiece(basket,
+            var BasketRecipe = new CustomPiece(basket,false,
                 new PieceConfig
                 {
 
@@ -374,7 +372,7 @@ namespace MoarBuilds
             barrell3chest.m_name = "Trader round barrel";
             barrell3chest.m_checkGuardStone = true;
             barrell3chest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
-            var barrelrecip3 = new CustomPiece(barrell3,
+            var barrelrecip3 = new CustomPiece(barrell3,false,
                 new PieceConfig
                 {
 
@@ -436,7 +434,7 @@ namespace MoarBuilds
             roundchest.m_checkGuardStone = true;
             roundchest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
 
-            var roundchestrecipe = new CustomPiece(roundbarrel,
+            var roundchestrecipe = new CustomPiece(roundbarrel,false,
                 new PieceConfig
                 {
 
@@ -498,7 +496,7 @@ namespace MoarBuilds
             cratechest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
             cratechest.m_name = "Crates";
             cratechest.m_checkGuardStone = true;
-            var craterecipe = new CustomPiece(crate,
+            var craterecipe = new CustomPiece(crate,false,
                 new PieceConfig
                 {
 
@@ -560,7 +558,7 @@ namespace MoarBuilds
                 DestroyImmediate(test.GetComponent<DropOnDestroyed>());
                 var Vertices = GetColliderVertexPosRotated(test);
                 AttachSnapPoints(test, Vertices);
-                var CP = new CustomPiece(test,
+                var CP = new CustomPiece(test,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -603,7 +601,7 @@ namespace MoarBuilds
                 var stonefloornew = PrefabManager.Instance.CreateClonedPrefab("piece_stonefloor_2x2", "stone_floor");
                 Vertices = GetColliderVertexPosRotated(stonefloornew);
                 AttachSnapPoints(stonefloornew, Vertices);
-                var CP2 = new CustomPiece(stonefloornew,
+                var CP2 = new CustomPiece(stonefloornew,false,
                new PieceConfig
                {
                    PieceTable = "_HammerPieceTable",
@@ -621,7 +619,7 @@ namespace MoarBuilds
                 DestroyImmediate(fence.GetComponent<DropOnDestroyed>());
                 fence.AddComponent<Piece>();
 
-                var fencecustom = new CustomPiece(fence,
+                var fencecustom = new CustomPiece(fence,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -665,7 +663,7 @@ namespace MoarBuilds
                 AttachSnapPoints(goblinroof1, Vertices);
                 goblinroof1.AddComponent<Piece>();
                 DestroyImmediate(goblinroof1.GetComponent<DropOnDestroyed>());
-                var goblinroof_1 = new CustomPiece(goblinroof1,
+                var goblinroof_1 = new CustomPiece(goblinroof1,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -709,7 +707,7 @@ namespace MoarBuilds
                 Vertices = GetColliderVertexPosRotated(goblinroof2);
                 AttachSnapPoints(goblinroof2, Vertices);
                 DestroyImmediate(goblinroof2.GetComponent<DropOnDestroyed>());
-                var goblinroof_2 = new CustomPiece(goblinroof2,
+                var goblinroof_2 = new CustomPiece(goblinroof2,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -753,7 +751,7 @@ namespace MoarBuilds
                 Vertices = GetColliderVertexPosRotated(goblinwall2m);
                 AttachSnapPoints(goblinwall2m, Vertices);
                 DestroyImmediate(goblinwall2m.GetComponent<DropOnDestroyed>());
-                var goblinwall_2m = new CustomPiece(goblinwall2m,
+                var goblinwall_2m = new CustomPiece(goblinwall2m,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -797,7 +795,7 @@ namespace MoarBuilds
                 Vertices = GetColliderVertexPosRotated(goblinwall1m);
                 AttachSnapPoints(goblinwall1m, Vertices);
                 DestroyImmediate(goblinwall1m.GetComponent<DropOnDestroyed>());
-                var goblinwall_1m = new CustomPiece(goblinwall1m,
+                var goblinwall_1m = new CustomPiece(goblinwall1m,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -841,7 +839,7 @@ namespace MoarBuilds
                 Vertices = GetColliderVertexPosRotated(goblinpole);
                 AttachSnapPoints(goblinpole, Vertices);
                 DestroyImmediate(goblinpole.GetComponent<DropOnDestroyed>());
-                var goblin_pole = new CustomPiece(goblinpole,
+                var goblin_pole = new CustomPiece(goblinpole,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -885,7 +883,7 @@ namespace MoarBuilds
                 Vertices = GetColliderVertexPosRotated(goblinbanner);
                 AttachSnapPoints(goblinbanner, Vertices);
                 DestroyImmediate(goblinbanner.GetComponent<DropOnDestroyed>());
-                var goblin_banner = new CustomPiece(goblinbanner,
+                var goblin_banner = new CustomPiece(goblinbanner,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -929,7 +927,7 @@ namespace MoarBuilds
                 Vertices = GetColliderVertexPosRotated(dungeongate);
                 AttachSnapPoints(dungeongate, Vertices);
                 //Destroy(dungeongate.GetComponent<DropOnDestroyed>());
-                var dungeon_gate = new CustomPiece(dungeongate,
+                var dungeon_gate = new CustomPiece(dungeongate,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -974,7 +972,7 @@ namespace MoarBuilds
                 Vertices = GetColliderMeshBounds(Goblinroof);
                 AttachSnapPoints(Goblinroof, Vertices);
                 DestroyImmediate(Goblinroof.GetComponent<DropOnDestroyed>());
-                var Goblin_roof = new CustomPiece(Goblinroof,
+                var Goblin_roof = new CustomPiece(Goblinroof,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -1035,7 +1033,7 @@ namespace MoarBuilds
                 ctn.m_checkGuardStone = true;
 
                 DestroyImmediate(Barrel.GetComponent<DropOnDestroyed>());
-                var BarrelBox = new CustomPiece(Barrel,
+                var BarrelBox = new CustomPiece(Barrel,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
@@ -1087,7 +1085,7 @@ namespace MoarBuilds
                 ctn4.m_checkGuardStone = true;
 
                 DestroyImmediate(Cratesingle.GetComponent<Destructible>());
-                var Cratesingle2 = new CustomPiece(Cratesingle,
+                var Cratesingle2 = new CustomPiece(Cratesingle,false,
                     new PieceConfig
                     {
                         PieceTable = "_HammerPieceTable",
