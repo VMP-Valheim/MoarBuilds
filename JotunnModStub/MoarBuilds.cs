@@ -135,44 +135,7 @@ namespace MoarBuilds
 
             Harmony.CreateAndPatchAll(typeof(MoarBuilds).Assembly);
         }
-    
-
-    private static bool GetAllZdosMatchingPrefabHashcodes(
-        ZDOMan zdoMan, HashSet<int> prefabHashcodes, List<ZDO> matchingZdos, ref int index)
-        {
-            if (index >= zdoMan.m_objectsBySector.Length)
-            {
-                foreach (var outsideZdos in zdoMan.m_objectsByOutsideSector.Values)
-                {
-                    matchingZdos.AddRange(outsideZdos.Where(zdo => zdo.IsValid() && prefabHashcodes.Contains(zdo.GetPrefab())));
-                }
-
-                return true;
-            }
-
-            int counted = 0;
-
-            while (index < zdoMan.m_objectsBySector.Length)
-            {
-                var sectorZdos = zdoMan.m_objectsBySector[index];
-
-                if (sectorZdos != null)
-                {
-                    var zdos = sectorZdos.Where(zdo => prefabHashcodes.Contains(zdo.GetPrefab()));
-                    matchingZdos.AddRange(zdos);
-                    counted += zdos.Count();
-                }
-
-                index++;
-
-                if (counted > 500)
-                {
-                    break;
-                }
-            }
-
-            return false;
-        }
+        
         private void configsyncheard()
         {
             ctn.m_width = chestwidth.Value;
@@ -593,7 +556,6 @@ namespace MoarBuilds
                 piece.m_noClipping = false;
                 piece.m_onlyInTeleportArea = false;
                 piece.m_allowedInDungeons = false;
-                piece.m_haveCenter = true;
                 piece.m_spaceRequirement = 2;
                 piece.m_placeEffect = effectList2;
                 #endregion
@@ -1018,13 +980,14 @@ namespace MoarBuilds
                 var view = Barrel.AddComponent<ZNetView>();
                 view.m_persistent = true;
                 Barrel.transform.gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
-                Barrel.transform.gameObject.transform.position = new Vector3(0f, 5f, 0f);
-                Barrel.transform.gameObject.transform.localPosition = new Vector3(0f, 5f, 0f);
+                Barrel.transform.gameObject.transform.position = new Vector3(0f, .1f, 0f);
+                Barrel.transform.TransformPoint(0, 0.1f, 0);
+                Barrel.transform.gameObject.transform.localPosition = new Vector3(0f, .1f, 0f);
                 var collider = Barrel.transform.gameObject.AddComponent<MeshCollider>();
                 Vertices = GetColliderVertexPosRotated(Barrel);
                 AttachSnapPoints(Barrel, Vertices);
                 collider.convex = false;
-                Jotunn.Logger.LogWarning($"Did I find it?{collider}");
+                collider.transform.SetPositionAndRotation(new Vector3(0,0.1f, 0f), Quaternion.identity);
                 //collider.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
                 var ctn = Barrel.AddComponent<Container>();
                 ctn.m_width = BarrelWidth.Value;
@@ -1147,7 +1110,6 @@ namespace MoarBuilds
                 itemDrop.m_itemData.m_shared.m_animationState = ItemDrop.ItemData.AnimationState.OneHanded;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackType = Attack.AttackType.Horizontal;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackAnimation = "swing_longsword";
-                itemDrop.m_itemData.m_shared.m_attack.m_currentAttackCainLevel = 2;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackRange = 5f;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackAngle = 70;
                 itemDrop.m_itemData.m_shared.m_attack.m_attackRayWidth = 0.8f;
@@ -1188,7 +1150,7 @@ namespace MoarBuilds
             }
             finally
             {
-                ItemManager.OnVanillaItemsAvailable -= GrabPieces;
+                PrefabManager.OnVanillaPrefabsAvailable -= GrabPieces;
             }
 
 
