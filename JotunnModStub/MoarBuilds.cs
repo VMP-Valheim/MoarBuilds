@@ -59,20 +59,37 @@ namespace MoarBuilds
         private Container basketchest;
         private Container ctn;
         private Container barrell3chest;
-        private object _getMatchingZdosBreakCount;
-        private ConfigEntry<bool> _isModEnabled;
-        private static GameObject Portal;
-        private ConfigEntry<float> _connectPortalCoroutineWait;
-        private ConfigEntry<string> _portalPrefabName;
-        private ConfigEntry<string> _onewayPortalTagPrefix;
-        private long _logIntervalSeconds;
 
         public static Vector3[] GetColliderVertexPosRotated(GameObject obj)
         {
             BoxCollider col = obj.GetComponentInChildren<BoxCollider>();
+            if (col == null)
+            {
+                var temp = GetColliderMeshBounds(obj);
+                return temp;
+            }
             var trans = obj.transform;
             var min = col.center - col.size * 0.5f;
             var max = col.center + col.size * 0.5f;
+            Vector3[] vertices = new Vector3[8];
+            vertices[0] = trans.TransformPoint(new Vector3(min.x, min.y, min.z));
+            vertices[1] = trans.TransformPoint(new Vector3(min.x, min.y, max.z));
+            vertices[2] = trans.TransformPoint(new Vector3(min.x, max.y, min.z));
+            vertices[3] = trans.TransformPoint(new Vector3(min.x, max.y, max.z));
+            vertices[4] = trans.TransformPoint(new Vector3(max.x, min.y, min.z));
+            vertices[5] = trans.TransformPoint(new Vector3(max.x, min.y, max.z));
+            vertices[6] = trans.TransformPoint(new Vector3(max.x, max.y, min.z));
+            vertices[7] = trans.TransformPoint(new Vector3(max.x, max.y, max.z));
+
+            return vertices;
+        }
+
+        public static Vector3[] GetColliderMeshBounds(GameObject obj)
+        {
+            MeshRenderer renderer = obj.GetComponentInChildren<MeshRenderer>();
+            var trans = obj.transform;
+            var min = renderer.bounds.min;
+            var max = renderer.bounds.max;
             Vector3[] vertices = new Vector3[8];
             vertices[0] = trans.TransformPoint(new Vector3(min.x, min.y, min.z));
             vertices[1] = trans.TransformPoint(new Vector3(min.x, min.y, max.z));
@@ -119,43 +136,6 @@ namespace MoarBuilds
 
 
             Harmony.CreateAndPatchAll(typeof(MoarBuilds).Assembly);
-            On.TeleportWorld.Awake += TeleportWorldAwakePrefix;
-            On.Game.ConnectPortals += GameConnectPortalsPrefix;
-        }
-    private void TeleportWorldAwakePrefix(On.TeleportWorld.orig_Awake orig, TeleportWorld self)
-        {
-            if (!_isModEnabled.Value)
-            {
-                orig(self);
-                return;
-            }
-
-            self.m_nview = self.GetComponent<ZNetView>();
-
-            if (self.m_nview.GetZDO() == null)
-            {
-                self.enabled = false;
-                return;
-            }
-
-            self.m_hadTarget = self.HaveTarget();
-
-            if (!self.m_proximityRoot)
-            {
-                self.m_proximityRoot = self.transform;
-            }
-
-            if (self.m_target_found == null)
-            {
-                GameObject targetFoundObject = self.gameObject.transform.Find("_target_found").gameObject;
-
-                targetFoundObject.SetActive(false);
-                self.m_target_found = targetFoundObject.AddComponent<EffectFade>();
-                targetFoundObject.SetActive(true);
-            }
-
-            self.m_nview.Register<string>("SetTag", new Action<long, string>(self.RPC_SetTag));
-            self.InvokeRepeating("UpdatePortal", 0.5f, 0.5f);
         }
     
 
@@ -226,16 +206,6 @@ namespace MoarBuilds
             CrateCraftingMat = Config.Bind("Crate Crafting Mat", "Crate Material 1", "Iron", new ConfigDescription("Crate Material #1", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             CrateCraftingMat2 = Config.Bind("Crate Crafting Mat", "Crate Material 2", "Wood", new ConfigDescription("Crate Material #2", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            _connectPortalCoroutineWait = Config.Bind("Portals", "connectPortalCoroutineWait", 4f, new ConfigDescription("Wait time (seconds) when ConnectPortal coroutine yields.", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-           
-            _portalPrefabName = Config.Bind("Portals", "portalPrefabName", "Stone_Portal", new ConfigDescription("Alternative portal prefab name to search for.", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            _onewayPortalTagPrefix = Config.Bind("Portals", "onewayPortalTagPrefix", ">>>", new ConfigDescription("Prefix for specifying a one-way portal.", null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-             _getMatchingZdosBreakCount = Config.Bind("Portals", "getMatchingZdosBreakCount", 400, new ConfigDescription("Max ZDOs to match before breaking/pausing in method.", new AcceptableValueRange<int>(0, 1600), null, new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            _isModEnabled = Config.Bind("Portals", "This enables connection of stone portal -> normal portals", true, new ConfigDescription ("disable or enable prefab linking for portals", null, new ConfigurationManagerAttributes { IsAdminOnly = true}));
-
         }
         private void SpriteThings()
         {
@@ -528,7 +498,6 @@ namespace MoarBuilds
             cratechest.m_bkg = PrefabManager.Cache.GetPrefab<GameObject>("piece_chest").GetComponent<Container>().m_bkg;
             cratechest.m_name = "Crates";
             cratechest.m_checkGuardStone = true;
-
             var craterecipe = new CustomPiece(crate,
                 new PieceConfig
                 {
@@ -1002,7 +971,7 @@ namespace MoarBuilds
                 #region Goblinroof
                 var Goblinroof = PrefabManager.Instance.CreateClonedPrefab("goblin_roof_cap1", "goblin_roof_cap");
                 Goblinroof.AddComponent<Piece>();
-                Vertices = GetColliderVertexPosRotated(Goblinroof);
+                Vertices = GetColliderMeshBounds(Goblinroof);
                 AttachSnapPoints(Goblinroof, Vertices);
                 DestroyImmediate(Goblinroof.GetComponent<DropOnDestroyed>());
                 var Goblin_roof = new CustomPiece(Goblinroof,
@@ -1071,7 +1040,6 @@ namespace MoarBuilds
                     {
                         PieceTable = "_HammerPieceTable",
                         AllowedInDungeons = false,
-                        Category =  "Furniture",
                         Requirements = new[]
                         {
                              new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
@@ -1086,7 +1054,7 @@ namespace MoarBuilds
                 BarrelBox.Piece.m_icon = barrelsprite;
                 BarrelBox.Piece.m_primaryTarget = false;
                 BarrelBox.Piece.m_randomTarget = false;
-                BarrelBox.Piece.m_category = Piece.PieceCategory.Building;
+                BarrelBox.Piece.m_category = Piece.PieceCategory.Furniture;
                 BarrelBox.Piece.m_enabled = true;
                 BarrelBox.Piece.m_clipEverything = true;
                 BarrelBox.Piece.m_isUpgrade = false;
@@ -1124,7 +1092,6 @@ namespace MoarBuilds
                     {
                         PieceTable = "_HammerPieceTable",
                         AllowedInDungeons = false,
-                        Category = "Furniture",
                         Requirements = new[]
                         {
                              new RequirementConfig { Item = "Iron", Amount = 5, Recover = true},
@@ -1139,7 +1106,7 @@ namespace MoarBuilds
                 Cratesingle2.Piece.m_icon = barrelsprite;
                 Cratesingle2.Piece.m_primaryTarget = false;
                 Cratesingle2.Piece.m_randomTarget = false;
-                Cratesingle2.Piece.m_category = Piece.PieceCategory.Building;
+                Cratesingle2.Piece.m_category = Piece.PieceCategory.Furniture;
                 Cratesingle2.Piece.m_enabled = true;
                 Cratesingle2.Piece.m_clipEverything = true;
                 Cratesingle2.Piece.m_isUpgrade = false;
@@ -1156,37 +1123,6 @@ namespace MoarBuilds
                 Cratesingle2.Piece.m_allowedInDungeons = false;
                 Cratesingle2.Piece.m_spaceRequirement = 0;
                 Cratesingle2.Piece.m_placeEffect = effectList;
-                #endregion
-                #region Portal
-                Portal = PrefabManager.Instance.CreateClonedPrefab("Stone_Portal", "portal");
-                var self = Portal.GetComponent<TeleportWorld>();
-                if (!self.m_proximityRoot)
-                {
-                    self.m_proximityRoot = self.transform;
-                }
-
-                if (self.m_target_found == null)
-                {
-                    GameObject targetFoundObject = self.gameObject.transform.Find("_target_found").gameObject;
-
-                    targetFoundObject.SetActive(false);
-                    self.m_target_found = targetFoundObject.AddComponent<EffectFade>();
-                    targetFoundObject.SetActive(true);
-                }
-                var Portaljohn = new CustomPiece(Portal,
-                    new PieceConfig
-                    {
-                        PieceTable = "_HammerPieceTable",
-                        AllowedInDungeons = false,
-                        Requirements = new[]
-                        {
-                             new RequirementConfig { Item = "Stone", Amount = 5, Recover = true},
-                             new RequirementConfig { Item = "SurtlingCore", Amount = 10, Recover = true },
-                             new RequirementConfig { Item = "GreydwarfEye", Amount = 20, Recover = false},
-                             new RequirementConfig { Item = "Thistle", Amount = 10, Recover = true}
-                        }
-                    });
-                
                 #endregion
 
 
@@ -1240,7 +1176,7 @@ namespace MoarBuilds
                 PieceManager.Instance.AddPiece(goblin_banner);
                 PieceManager.Instance.AddPiece(Goblin_roof);
                 PieceManager.Instance.AddPiece(BarrelBox);
-                PieceManager.Instance.AddPiece(Portaljohn);
+                //PieceManager.Instance.AddPiece(Portaljohn);
                 //PieceManager.Instance.AddPiece(Cratesingle2);
                 #endregion
 
@@ -1260,118 +1196,7 @@ namespace MoarBuilds
 
 
         }
-
-
-
-        private IEnumerator GameConnectPortalsPrefix(On.Game.orig_ConnectPortals orig, Game self)
-        {
-            ZDOMan zdoMan = ZDOMan.instance;
-
-            long logTimestamp;
-            long lastLogTimestamp = 0;
-
-            while (true)
-            {
-                logTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-                bool shouldLog = (logTimestamp - lastLogTimestamp) > _logIntervalSeconds;
-
-                self.m_tempPortalList.Clear();
-
-                int index = 0;
-                bool getPrefabsComplete;
-
-                HashSet<int> prefabHashcodes = new HashSet<int> {
-          self.m_portalPrefab.name.GetStableHashCode(),
-          _portalPrefabName.Value.GetStableHashCode()
-        };
-
-                do
-                {
-                    getPrefabsComplete =
-                        GetAllZdosMatchingPrefabHashcodes(zdoMan, prefabHashcodes, self.m_tempPortalList, ref index);
-
-                    yield return null;
-                } while (!getPrefabsComplete);
-
-#if DEBUG
-                Jotunn.Logger.LogInfo("Found " + self.m_tempPortalList.Count + " portal prefabs.");
-#endif
-
-                foreach (ZDO zdo in self.m_tempPortalList)
-                {
-                    ZDOID targetZdoid = zdo.GetZDOID("target");
-
-                    if (targetZdoid.IsNone())
-                    {
-                        continue;
-                    }
-
-                    string @tag = zdo.GetString("tag", string.Empty);
-                    ZDO targetZdo = zdoMan.GetZDO(targetZdoid);
-
-                    if (tag == string.Empty
-                        || targetZdo == null
-                        || (targetZdo.GetString("tag", string.Empty) != tag && !tag.StartsWith(_onewayPortalTagPrefix.Value)))
-                    {
-                        zdo.SetOwner(zdoMan.GetMyID());
-                        zdo.Set("target", ZDOID.None);
-                        zdoMan.ForceSendZDO(zdo.m_uid);
-                    }
-                }
-
-                foreach (ZDO zdo in self.m_tempPortalList)
-                {
-                    string @tag = zdo.GetString("tag", string.Empty);
-
-                    if (tag == string.Empty || !zdo.GetZDOID("target").IsNone())
-                    {
-                        continue;
-                    }
-
-                    // If tag starts with oneway-prefix, look for matching portal that has tag without the prefix. 
-                    bool isOneWayPortal = tag.StartsWith(_onewayPortalTagPrefix.Value);
-                    ZDO targetZdo = self.FindRandomUnconnectedPortal(
-                        self.m_tempPortalList, zdo, isOneWayPortal ? tag.Remove(0, _onewayPortalTagPrefix.Value.Length) : tag);
-
-                    if (targetZdo != null)
-                    {
-                        zdo.SetOwner(zdoMan.GetMyID());
-                        zdo.Set("target", targetZdo.m_uid);
-
-                        // Only connect target if we are not a one-way portal.
-                        targetZdo.SetOwner(zdoMan.GetMyID());
-                        targetZdo.Set("target", isOneWayPortal ? ZDOID.None : zdo.m_uid);
-
-                        zdoMan.ForceSendZDO(zdo.m_uid);
-                        zdoMan.ForceSendZDO(targetZdo.m_uid);
-                    }
-                }
-
-#if DEBUG
-                Jotunn.Logger.LogInfo("ZDOMan.instance.m_objectsById.Count: " + zdoMan.m_objectsByID.Count);
-                    lastLogTimestamp = logTimestamp;
-#endif
-
-                yield return new WaitForSeconds(_connectPortalCoroutineWait.Value);
-            }
-        }
-        [HarmonyPatch(typeof(TeleportWorld), "Interact")]
-        private class Interact_Patch
-        { 
-            private static IEnumerable<CodeInstruction> Transpiler(
-              IEnumerable<CodeInstruction> instructions)
-            {
-                List<CodeInstruction> source = new List<CodeInstruction>(instructions);
-                
-                    for (int index = 0; index < source.Count; ++index)
-                    {
-                        if (source[index].opcode == OpCodes.Ldc_I4_S)
-                            source[index].operand = (object)(int)sbyte.MaxValue;
-                    }
-                
-                return source.AsEnumerable<CodeInstruction>();
-            }
-        }
+        
     }
 
     
